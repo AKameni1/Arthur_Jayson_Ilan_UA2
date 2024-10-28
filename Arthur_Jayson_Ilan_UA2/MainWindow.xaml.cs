@@ -21,6 +21,7 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             InitializeComponent();
             PreloadBackgroundImage();
+            MainContentControl.Content = new LoginUserControl();
         }
 
         private void PreloadBackgroundImage()
@@ -35,7 +36,11 @@ namespace Arthur_Jayson_Ilan_UA2
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LoadingSpinner.Visibility = Visibility.Visible; // Afficher le spinner
+            MainContentControl.Visibility = Visibility.Collapsed;
             await LoadBackgroundImageAsync();
+            LoadingSpinner.Visibility = Visibility.Collapsed; // Masquer le spinner
+            MainContentControl.Visibility = Visibility.Visible;
         }
 
         private async Task LoadBackgroundImageAsync()
@@ -52,6 +57,11 @@ namespace Arthur_Jayson_Ilan_UA2
                     };
                 });
             });
+        }
+
+        public void LoadNewUserControl(UserControl newControl)
+        {
+            MainContentControl.Content = newControl;
         }
     }
 }

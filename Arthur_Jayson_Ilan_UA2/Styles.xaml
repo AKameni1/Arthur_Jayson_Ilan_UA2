@@ -11,8 +11,6 @@
 
     <!--Style du Frame-->
     <Style x:Key="StyledFrameContainer" TargetType="Border">
-        <Setter Property="Width" Value="346" />
-        <Setter Property="Height" Value="368" />
         <Setter Property="Opacity" Value="0.8" />
 
         <Setter Property="Background">
@@ -24,7 +22,7 @@
 
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect Direction="90" ShadowDepth="1" Color="#000000" Opacity="0.25"/>
+                <DropShadowEffect Direction="320" ShadowDepth="1" Color="#000000" Opacity="0.25"/>
             </Setter.Value>
         </Setter>
         
