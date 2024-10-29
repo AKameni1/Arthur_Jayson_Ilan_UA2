@@ -70,11 +70,15 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3,0,0" Grid.Row="5">
-                <TextBlock Text="Mot de passe oublié ?" 
-                               Style="{StaticResource SecondaryLinkTextStyle}"/>
+                <TextBlock x:Name="ForgotPasswordText"
+                           Text="Mot de passe oublié ?" 
+                           Style="{StaticResource SecondaryLinkTextStyle}"
+                           MouseDown="ResetData_MouseDown"/>
                 <TextBlock Text=" | " FontFamily="{StaticResource RobotoRegular}"/>
-                <TextBlock Text="Nom d'utilisateur oublié ?" 
-                               Style="{StaticResource SecondaryLinkTextStyle}"/>
+                <TextBlock x:Name="ForgotUsernameText"
+                           Text="Nom d'utilisateur oublié ?" 
+                           Style="{StaticResource SecondaryLinkTextStyle}"
+                           MouseDown="ResetData_MouseDown"/>
             </StackPanel>
         </Grid>
     </Border>

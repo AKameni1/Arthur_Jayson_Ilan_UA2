@@ -9,7 +9,7 @@
     <FontFamily x:Key="RobotoThin">./Assets/Fonts/Roboto/Roboto-Thin.ttf#Roboto</FontFamily>
     <FontFamily x:Key="RobotoMedium">./Assets/Fonts/Roboto/Roboto-Medium.ttf#Roboto</FontFamily>
 
-    <!--Style du Frame-->
+    <!--Style du Frame Border-->
     <Style x:Key="StyledFrameContainer" TargetType="Border">
         <Setter Property="Opacity" Value="0.8" />
 
@@ -74,7 +74,31 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="7,0,4,0"/>
-        
+
+        <!--Animation optionnelle-->
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Foreground).Color" To="#a8d8ea" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Width" To="25" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Height" To="25" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Foreground).Color" To="#F5F5F5" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Width" To="20" Duration="0:0:0.2"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Height" To="20" Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </Style.Triggers>
+
     </Style>
 
     <Style x:Key="LabelTextStyle" TargetType="TextBlock">

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,17 +20,19 @@ using Arthur_Jayson_Ilan_UA2;
 namespace Arthur_Jayson_Ilan_UA2
 {
     /// <summary>
-    /// Logique d'interaction pour SignupUserControl.xaml
+    /// Logique d'interaction pour ResetPasswordUserControl.xaml
     /// </summary>
-    public partial class SignupUserControl : UserControl
+    public partial class ResetPasswordUserControl : UserControl
     {
-        public SignupUserControl()
+        private User CurrentUser;
+        public ResetPasswordUserControl(User user)
         {
             InitializeComponent();
-            Loaded += SignupUserControl_Loaded;
+            CurrentUser = user;
+            Loaded += ResetPasswordUserControl_Loaded;
         }
 
-        private void SignupUserControl_Loaded(object sender, RoutedEventArgs e)
+        private void ResetPasswordUserControl_Loaded(object sender, RoutedEventArgs e)
         {
             var storyboard = (Storyboard)FindResource("FadeInAnimation");
             storyboard.Begin(this);
@@ -82,99 +83,64 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             PasswordBox.Password = PasswordTextBox.Text;
         }
-        
+
         private void ConfirmPasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             ConfirmPasswordBox.Password = ConfirmPasswordTextBox.Text;
         }
 
-        private bool ValidateFields()
+        private bool ValidatePassword()
         {
-            bool isValid = true;
-            string emailPattern = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
+            string password = PasswordBox.Password;
+            string confirmPassword = ConfirmPasswordBox.Password;
 
-            if (string.IsNullOrWhiteSpace(UsernameTextBox.Text))
-            {
-                UsernameErrorTextBlock.Text = "Veuillez entrer un nom d'utilisateur.";
-                UsernameErrorTextBlock.Visibility = Visibility.Visible;
-                isValid = false;
-            }
-            else
-            {
-                UsernameErrorTextBlock.Visibility = Visibility.Collapsed;
-                //UsernameErrorTextBlock.Text = string.Empty;
-            }
+            PasswordErrorTextBlock.Visibility = Visibility.Collapsed;
+            ConfirmPasswordErrorTextBlock.Visibility = Visibility.Collapsed;
 
-            if (string.IsNullOrWhiteSpace(EmailTextBox.Text) || !Regex.IsMatch(EmailTextBox.Text, emailPattern))
+            if (password.Length < 6)
             {
-                EmailErrorTextBlock.Text = "Veuillez entrer une adresse e-mail valide.";
-                EmailErrorTextBlock.Visibility = Visibility.Visible;
-                isValid = false;
-            }
-            else
-            {
-                EmailErrorTextBlock.Visibility = Visibility.Collapsed;
-                //EmailErrorTextBlock.Text = string.Empty;
-            }
-
-            if (string.IsNullOrWhiteSpace(PasswordBox.Password))
-            {
-                PasswordErrorTextBlock.Text = "Veuillez entrer un mot de passe.";
+                PasswordErrorTextBlock.Text = "Le mot de passe doit contenir au moins 6 caractères.";
                 PasswordErrorTextBlock.Visibility = Visibility.Visible;
-                isValid = false;
-            }
-            else if (PasswordBox.Password.Length < 6)
-            {
-                PasswordErrorTextBlock.Text = "Le mot de passe doit comporter au moins 6 caractères.";
-                PasswordErrorTextBlock.Visibility = Visibility.Visible;
-                isValid = false;
+                return false;
             }
             else
             {
-                PasswordErrorTextBlock.Visibility = Visibility.Collapsed;
-
-                if (PasswordBox.Password != ConfirmPasswordBox.Password)
+                if (password != confirmPassword)
                 {
                     ConfirmPasswordErrorTextBlock.Text = "Les mots de passe ne correspondent pas.";
                     ConfirmPasswordErrorTextBlock.Visibility = Visibility.Visible;
-                    isValid = false;
+                    return false;
                 }
-                else
-                {
-                    ConfirmPasswordErrorTextBlock.Visibility = Visibility.Collapsed;
-                    //ConfirmPasswordErrorTextBlock.Text = string.Empty;
-                }
-
-                //PasswordErrorTextBlock.Text = string.Empty;
-
             }
 
-            return isValid;
+            return true;
         }
 
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ValidateFields())
+            if (ValidatePassword())
             {
                 try
                 {
-                    App.UserManager.RegisterUser(UsernameTextBox.Text, PasswordBox.Password, EmailTextBox.Text);
-                    MessageBox.Show("Inscription réussie !");
+                    App.UserManager.UpdatePassword(CurrentUser, PasswordBox.Password);
+                    MessageBox.Show("Mot de passe mis à jour avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     var mainWindow = Application.Current.MainWindow as MainWindow;
                     mainWindow?.LoadNewUserControl(new LoginUserControl());
                 }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show($"Erreur de mise à jour : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show($"Erreur de validation : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Une erreur inattendue s'est produite : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        private void AlreadyHaveAccount_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            mainWindow?.LoadNewUserControl(new LoginUserControl());
         }
     }
 }

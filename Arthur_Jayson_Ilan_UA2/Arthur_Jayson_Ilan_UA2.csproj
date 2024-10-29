@@ -35,4 +35,8 @@
     <Resource Include="Assets\Images\img_background.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="LoginPageUsersControls\" />
+  </ItemGroup>
+
 </Project>

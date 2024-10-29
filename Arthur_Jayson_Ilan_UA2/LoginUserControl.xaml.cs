@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.IconPacks;
+using Arthur_Jayson_Ilan_UA2;
 
 namespace Arthur_Jayson_Ilan_UA2
 {
@@ -123,6 +124,23 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
             mainWindow?.LoadNewUserControl(new SignupUserControl());
+        }
+
+        private void ResetData_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock clickedTextBlock)
+            {
+                var mainWindow = Application.Current.MainWindow as MainWindow;
+
+                if (clickedTextBlock.Name == "ForgotPasswordText")
+                {
+                    mainWindow?.LoadNewUserControl(new EmailVerificationUserControl("password"));
+                }
+                else if (clickedTextBlock.Name == "ForgotUsernameText")
+                {
+                    mainWindow?.LoadNewUserControl(new EmailVerificationUserControl("username"));
+                }
+            }
         }
     }
 }

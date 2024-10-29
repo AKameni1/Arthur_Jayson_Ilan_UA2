@@ -10,7 +10,7 @@ namespace Arthur_Jayson_Ilan_UA2
     public class User(string username, string password, string email, string role = "client", bool isSuperAdmin = false)
     {
         public string Username { get; set; } = username;
-        private readonly string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+        private string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
         public string Email { get; set; } = email;
         public string Role { get; private set; } = role;
         public bool IsSuperAdmin { get; private set; } = isSuperAdmin;
@@ -36,15 +36,44 @@ namespace Arthur_Jayson_Ilan_UA2
             Role = newRole;
         }
 
+        public void ChangePassword(string newPassword)
+        {
+            passwordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        }
+
         public bool IsAdmin()
         {
             return Role == "administrator";
+        }
+
+        public void ChangeUsername(string newUsername, UserManager userManager)
+        {
+            if (string.IsNullOrWhiteSpace(newUsername)) throw new ArgumentException("Le nom d'utilisateur ne peut pas être vide.");
+
+            if (userManager.UsernameExists(newUsername)) throw new InvalidOperationException("Ce nom d'utilisateur est déjà pris.");
+
+            Username = newUsername;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is User otherUser)
+            {
+                return this.Username.Equals(otherUser.Username, StringComparison.OrdinalIgnoreCase) &&
+                       this.Email.Equals(otherUser.Email, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Username.ToLower(), Email.ToLower());
         }
     }
 
     public class UserManager
     {
-        private readonly List<User> _users = [];
+        private readonly List<User> _users = new List<User>();
         public UserManager()
         {
             RegisterSuperAdmin("SuperAdmin", "SuperPassword", "admin@example.ca");
@@ -68,16 +97,54 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             User? user = _users.Find(u => u.Username.Equals(username,StringComparison.OrdinalIgnoreCase));
 
-            if (user != null && user.VerifyPassword(password)) return user;
-
-            return user;
+            return user != null && user.VerifyPassword(password) ? user : null;
         }
 
-        public static void PromoteToAdmin(User user)
+        public User? FindUserByEmail(string email)
         {
-            if (user.IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas être promu.");
+            return _users.Find(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        }
 
-            user.ChangeRole("administrator");
+        public static void PromoteToAdmin(User currentUser, User targetuser)
+        {
+            if (!currentUser.IsSuperAdmin) throw new UnauthorizedAccessException("Seul le super administrateur peut promouvoir des utilisateurs.");
+
+            if (targetuser.IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas être promu.");
+
+            if (targetuser.IsAdmin()) throw new InvalidOperationException("L'utilisateur est déjà administrateur."); 
+
+            targetuser.ChangeRole("administrator");
+        }
+
+        public static void DemoteToClient(User currentUser, User targetuser)
+        {
+            if (!currentUser.IsSuperAdmin) throw new UnauthorizedAccessException("Seul le super administrateur peut rétrograder des utilisateurs.");
+
+            if (targetuser.IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas être rétrogradé.");
+
+            if (targetuser.IsAdmin()) throw new InvalidOperationException("L'utilisateur est déjà client.");
+
+            targetuser.ChangeRole("client");
+        }
+
+        public void DeleteUser(User currentUser, User userToDelete)
+        {
+            if (!currentUser.IsSuperAdmin) throw new UnauthorizedAccessException("Seul le super administrateur peut supprimer des utilisateurs.");
+
+            if (userToDelete.IsSuperAdmin) throw new InvalidOperationException("Le compte du super administrateur ne peut pas être supprimé.");
+
+            bool removed = _users.Remove(userToDelete);
+
+            if (!removed) throw new ArgumentException("L'utilisateur spécifié n'existe pas.");
+        }
+        public void UpdatePassword(User user, string newPassword)
+        {
+            user.ChangePassword(newPassword);
+        }
+
+        public bool UsernameExists(string username)
+        {
+            return _users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
