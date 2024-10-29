@@ -9,9 +9,9 @@ namespace Arthur_Jayson_Ilan_UA2
 {
     public class User(string username, string password, string email, string role = "client", bool isSuperAdmin = false)
     {
-        public string Username { get; set; } = username;
+        public string Username { get; private set; } = username;
         private string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-        public string Email { get; set; } = email;
+        public string Email { get; private set; } = email;
         public string Role { get; private set; } = role;
         public bool IsSuperAdmin { get; private set; } = isSuperAdmin;
 
@@ -23,15 +23,9 @@ namespace Arthur_Jayson_Ilan_UA2
 
         public void ChangeRole(string newRole)
         {
-            if (IsSuperAdmin)
-            {
-                throw new InvalidOperationException("Le super admin ne peut pas changer son propre rôle");
-            }
+            if (IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas changer son propre rôle");
 
-            if (newRole != "client" && newRole != "administrator")
-            {
-                throw new ArgumentException("Rôle non valide. Les rôles possibles sont 'client' et 'administrator'.");
-            }
+            if (newRole != "client" && newRole != "administrator" && newRole != "bibliothecaire") throw new ArgumentException("Rôle non valide. Les rôles possibles sont 'client', 'administrator', 'bibliothecaire'.");
 
             Role = newRole;
         }
@@ -41,10 +35,9 @@ namespace Arthur_Jayson_Ilan_UA2
             passwordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
         }
 
-        public bool IsAdmin()
-        {
-            return Role == "administrator";
-        }
+        public bool IsAdmin() => Role == "administrator";
+
+        public bool IsLibrarian() => Role == "bibliothecaire";
 
         public void ChangeUsername(string newUsername, UserManager userManager)
         {
@@ -79,7 +72,7 @@ namespace Arthur_Jayson_Ilan_UA2
             RegisterSuperAdmin("SuperAdmin", "SuperPassword", "admin@example.ca");
         }
 
-        public void RegisterSuperAdmin(string username, string password, string email)
+        private void RegisterSuperAdmin(string username, string password, string email)
         {
             if (_users.Exists(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException("Un super admin avec ce nom d'utilisateur existe déjà.");
 
@@ -105,15 +98,30 @@ namespace Arthur_Jayson_Ilan_UA2
             return _users.Find(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static void PromoteToAdmin(User currentUser, User targetuser)
+        public void PromoteToAdmin(User currentUser, User targetuser)
         {
             if (!currentUser.IsSuperAdmin) throw new UnauthorizedAccessException("Seul le super administrateur peut promouvoir des utilisateurs.");
 
             if (targetuser.IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas être promu.");
 
-            if (targetuser.IsAdmin()) throw new InvalidOperationException("L'utilisateur est déjà administrateur."); 
+            if (targetuser.IsAdmin()) throw new InvalidOperationException("L'utilisateur est déjà administrateur.");
+
+            if (_users.Count(u => u.IsAdmin()) >= 4) throw new InvalidOperationException("Nombre maximal d'administrateurs atteint.");
 
             targetuser.ChangeRole("administrator");
+        }
+
+        public void PromoteToBibliothecaire(User currentUser, User targetuser)
+        {
+            if (!currentUser.IsSuperAdmin) throw new UnauthorizedAccessException("Seul le super administrateur peut promouvoir des utilisateurs.");
+
+            if (targetuser.IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas être promu.");
+
+            if (targetuser.IsLibrarian()) throw new InvalidOperationException("L'utilisateur est déjà bibliothécaire.");
+
+            if (_users.Count(u => u.IsLibrarian()) >= 3) throw new InvalidOperationException("Nombre maximal d'administrateurs atteint.");
+
+            targetuser.ChangeRole("bibliothecaire");
         }
 
         public static void DemoteToClient(User currentUser, User targetuser)
@@ -122,7 +130,7 @@ namespace Arthur_Jayson_Ilan_UA2
 
             if (targetuser.IsSuperAdmin) throw new InvalidOperationException("Le super admin ne peut pas être rétrogradé.");
 
-            if (targetuser.IsAdmin()) throw new InvalidOperationException("L'utilisateur est déjà client.");
+            if (targetuser.Role == "client") throw new InvalidOperationException("L'utilisateur est déjà client.");
 
             targetuser.ChangeRole("client");
         }
