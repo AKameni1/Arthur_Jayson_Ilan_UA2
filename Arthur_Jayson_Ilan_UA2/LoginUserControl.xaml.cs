@@ -99,7 +99,23 @@ namespace Arthur_Jayson_Ilan_UA2
 
             if (!hasError)
             {
-                MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                var user = App.UserManager.Authenticate(UsernameTextBox.Text, PasswordBox.Password);
+
+                if (user != null)
+                {
+                    if (user.IsSuperAdmin)
+                    {
+                        MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Nom d'utilisateur ou mot de passe incorrect.", "Échec de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

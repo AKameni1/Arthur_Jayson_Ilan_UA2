@@ -21,7 +21,7 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             InitializeComponent();
             PreloadBackgroundImage();
-            MainContentControl.Content = new SignupUserControl();
+            MainContentControl.Content = new LoginUserControl();
         }
 
         private void PreloadBackgroundImage()

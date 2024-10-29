@@ -155,10 +155,18 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             if (ValidateFields())
             {
-                MessageBox.Show("Inscription réussie !");
+                try
+                {
+                    App.UserManager.RegisterUser(UsernameTextBox.Text, PasswordBox.Password, EmailTextBox.Text);
+                    MessageBox.Show("Inscription réussie !");
 
-                var mainWindow = Application.Current.MainWindow as MainWindow;
-                mainWindow?.LoadNewUserControl(new LoginUserControl());
+                    var mainWindow = Application.Current.MainWindow as MainWindow;
+                    mainWindow?.LoadNewUserControl(new LoginUserControl());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
