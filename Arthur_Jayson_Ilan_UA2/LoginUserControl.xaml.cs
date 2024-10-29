@@ -102,5 +102,11 @@ namespace Arthur_Jayson_Ilan_UA2
                 MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        private void NotHaveAccount_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            mainWindow?.LoadNewUserControl(new SignupUserControl());
+        }
     }
 }

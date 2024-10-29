@@ -66,7 +66,7 @@
 
             <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="4">
                 <TextBlock Text="Pas encore de compte ? " Style="{StaticResource SecondaryTextStyle}"/>
-                <TextBlock Text="Inscrivez-vous!" Style="{StaticResource LinkTextStyle}"/>
+                <TextBlock Text="Inscrivez-vous!" Style="{StaticResource LinkTextStyle}" MouseDown="NotHaveAccount_MouseDown"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3,0,0" Grid.Row="5">

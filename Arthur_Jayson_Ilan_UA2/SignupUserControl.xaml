@@ -1,0 +1,138 @@
+﻿<UserControl x:Class="Arthur_Jayson_Ilan_UA2.SignupUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2"
+             mc:Ignorable="d" >
+
+    <Border Style="{StaticResource StyledFrameContainer}" Padding="4" Width="700" MaxHeight="370">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="I n s c r i p t i o n" HorizontalAlignment="Center" FontSize="20" FontFamily="{StaticResource RobotoRegular}" Margin="0,15" Grid.Row="0" Grid.ColumnSpan="2"/>
+
+            <Grid Grid.Row="1">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Margin="0,10" HorizontalAlignment="Center">
+                    <TextBlock Text="Nom d'utilisateur :" Style="{StaticResource LabelTextStyle}"/>
+                    <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Icon:PackIconMaterial Kind="Account" Style="{StaticResource IconStyle}"/>
+                            <TextBox x:Name="UsernameTextBox" Style="{StaticResource InputTextBoxStyle}" Grid.Column="1"/>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="UsernameErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="1">
+                    <TextBlock Text="Mot de passe :" Style="{StaticResource LabelTextStyle}"/>
+                    <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Icon:PackIconMaterial Kind="Lock" Style="{StaticResource IconStyle}"/>
+                            <PasswordBox x:Name="PasswordBox" Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"/>
+                            <TextBox x:Name="PasswordTextBox" Visibility="Collapsed" Grid.Column="1" TextChanged="PasswordTextBox_TextChanged" Style="{StaticResource InputTextBoxStyle}"/>
+                            <ToggleButton x:Name="TogglePasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand" Grid.Column="2" Click="TogglePasswordVisibility_Click">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Icon:PackIconMaterial x:Name="EyeIcon" Kind="EyeOff" Style="{StaticResource IconStyle}"/>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="PasswordErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}" TextWrapping="Wrap" Width="200" HorizontalAlignment="Left"/>
+                </StackPanel>
+
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="0,10" HorizontalAlignment="Center">
+                    <TextBlock Text="Adresse e-mail :" Style="{StaticResource LabelTextStyle}"/>
+                    <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Icon:PackIconMaterial Kind="Email" Style="{StaticResource IconStyle}"/>
+                            <TextBox x:Name="EmailTextBox" Style="{StaticResource InputTextBoxStyle}" Grid.Column="1"/>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="EmailErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="1">
+                    <TextBlock Text="Confirmer le mot de passe :" Style="{StaticResource LabelTextStyle}"/>
+                    <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Icon:PackIconMaterial Kind="Lock" Style="{StaticResource IconStyle}"/>
+                            <PasswordBox x:Name="ConfirmPasswordBox" Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"/>
+                            <TextBox x:Name="ConfirmPasswordTextBox" Visibility="Collapsed" Grid.Column="1" TextChanged="ConfirmPasswordTextBox_TextChanged" Style="{StaticResource InputTextBoxStyle}"/>
+                            <ToggleButton x:Name="ToggleConfirmPasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand" Grid.Column="2" Click="TogglePasswordVisibility_Click">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Icon:PackIconMaterial x:Name="EyeIcon" Kind="EyeOff" Style="{StaticResource IconStyle}"/>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Name="ConfirmPasswordErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
+                </StackPanel>
+
+            </Grid>
+            
+            <Button Content="S'inscrire" Style="{StaticResource ButtonStyle}" Grid.Row="2" Grid.ColumnSpan="2" Click="RegisterButton_Click" />
+
+            <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="3" Grid.ColumnSpan="2">
+                <TextBlock Text="Déjà un compte ? " Style="{StaticResource SecondaryTextStyle}"/>
+                <TextBlock Text="Connectez-vous!" Style="{StaticResource LinkTextStyle}" MouseDown="AlreadyHaveAccount_MouseDown"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+        
+</UserControl>

@@ -42,6 +42,7 @@
         <Setter Property="FontFamily" Value="{StaticResource RobotoRegular}"/>
         <Setter Property="Foreground" Value="WhiteSmoke"/>
         <Setter Property="CaretBrush" Value="WhiteSmoke"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -81,6 +82,7 @@
         <!--<Setter Property="Foreground" Value="White"/>-->
         <Setter Property="Margin" Value="0,0,0,5"/>
         <Setter Property="FontFamily" Value="{StaticResource RobotoRegular}"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
     </Style>
 
     <Style x:Key="ButtonStyle" TargetType="Button">
@@ -126,10 +128,12 @@
         <Setter Property="FontSize" Value="12"/>
         <!--<Setter Property="Foreground" Value="White"/>-->
         <Setter Property="FontFamily" Value="{StaticResource RobotoRegular}"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
     </Style>
 
     <Style x:Key="LinkTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
         <Setter Property="Foreground" Value="#008000"/>
         <Setter Property="Cursor" Value="Hand"/>
         <!--<Setter Property="TextDecorations" Value="Underline"/>-->
@@ -143,6 +147,7 @@
 
     <Style x:Key="SecondaryLinkTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
         <Setter Property="Foreground" Value="#125773"/>
         <Setter Property="Cursor" Value="Hand"/>
         <!--<Setter Property="TextDecorations" Value="Underline"/>-->
@@ -152,6 +157,7 @@
     <Style x:Key="ErrorTextBlockStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="#E57373"/>
         <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
         <Setter Property="FontFamily" Value="{StaticResource RobotoRegular}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Margin" Value="5,0,0,0"/>
