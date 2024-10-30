@@ -81,7 +81,7 @@ namespace Arthur_Jayson_Ilan_UA2
 
         public void RegisterUser(string username, string password, string email)
         {
-            if (_users.Exists(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException("Un utilisateur avec ce nom d'utilisateur existe déjà.");
+            if (UsernameExists(username)) throw new InvalidOperationException("Un utilisateur avec ce nom d'utilisateur existe déjà.");
 
             _users.Add(new User(username, password, email));
         }
@@ -145,6 +145,7 @@ namespace Arthur_Jayson_Ilan_UA2
 
             if (!removed) throw new ArgumentException("L'utilisateur spécifié n'existe pas.");
         }
+
         public void UpdatePassword(User user, string newPassword)
         {
             user.ChangePassword(newPassword);

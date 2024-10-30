@@ -92,17 +92,16 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             bool isValid = true;
             string emailPattern = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
+            UsernameErrorTextBlock.Visibility = Visibility.Collapsed;
+            EmailErrorTextBlock.Visibility = Visibility.Collapsed;
+            PasswordErrorTextBlock.Visibility = Visibility.Collapsed;
+            ConfirmPasswordErrorTextBlock.Visibility = Visibility.Collapsed;
 
             if (string.IsNullOrWhiteSpace(UsernameTextBox.Text))
             {
                 UsernameErrorTextBlock.Text = "Veuillez entrer un nom d'utilisateur.";
                 UsernameErrorTextBlock.Visibility = Visibility.Visible;
                 isValid = false;
-            }
-            else
-            {
-                UsernameErrorTextBlock.Visibility = Visibility.Collapsed;
-                //UsernameErrorTextBlock.Text = string.Empty;
             }
 
             if (string.IsNullOrWhiteSpace(EmailTextBox.Text) || !Regex.IsMatch(EmailTextBox.Text, emailPattern))
@@ -111,11 +110,6 @@ namespace Arthur_Jayson_Ilan_UA2
                 EmailErrorTextBlock.Visibility = Visibility.Visible;
                 isValid = false;
             }
-            else
-            {
-                EmailErrorTextBlock.Visibility = Visibility.Collapsed;
-                //EmailErrorTextBlock.Text = string.Empty;
-            }
 
             if (string.IsNullOrWhiteSpace(PasswordBox.Password))
             {
@@ -123,11 +117,17 @@ namespace Arthur_Jayson_Ilan_UA2
                 PasswordErrorTextBlock.Visibility = Visibility.Visible;
                 isValid = false;
             }
-            else if (PasswordBox.Password.Length < 6)
+            else if (PasswordBox.Password.Length < 12)
             {
-                PasswordErrorTextBlock.Text = "Le mot de passe doit comporter au moins 6 caractères.";
+                PasswordErrorTextBlock.Text = "Le mot de passe doit comporter au moins 12 caractères.";
                 PasswordErrorTextBlock.Visibility = Visibility.Visible;
                 isValid = false;
+            }
+            else if (!(PasswordBox.Password.Any(char.IsUpper) && PasswordBox.Password.Any(char.IsLower) && PasswordBox.Password.Any(char.IsDigit)))
+            {
+                PasswordErrorTextBlock.Text = "Le mot de passe doit contenir au moins une majuscule, une minuscule, et un chiffre.";
+                PasswordErrorTextBlock.Visibility = Visibility.Visible;
+                isValid =  false;
             }
             else
             {
@@ -139,34 +139,37 @@ namespace Arthur_Jayson_Ilan_UA2
                     ConfirmPasswordErrorTextBlock.Visibility = Visibility.Visible;
                     isValid = false;
                 }
-                else
-                {
-                    ConfirmPasswordErrorTextBlock.Visibility = Visibility.Collapsed;
-                    //ConfirmPasswordErrorTextBlock.Text = string.Empty;
-                }
-
-                //PasswordErrorTextBlock.Text = string.Empty;
 
             }
 
             return isValid;
         }
 
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        private async void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             if (ValidateFields())
             {
                 try
                 {
+                    SignupErrorTextBlock.Visibility = Visibility.Collapsed;
                     App.UserManager.RegisterUser(UsernameTextBox.Text, PasswordBox.Password, EmailTextBox.Text);
-                    MessageBox.Show("Inscription réussie !");
+
+                    await Task.Delay(200);
+                    //MessageBox.Show("Inscription réussie !");
+                    SignupSuccessTextBlock.Text = "Inscription réussie !";
+                    SignupSuccessTextBlock.Visibility = Visibility.Visible;
+
+                    await Task.Delay(1000);
 
                     var mainWindow = Application.Current.MainWindow as MainWindow;
                     mainWindow?.LoadNewUserControl(new LoginUserControl());
+                    SignupSuccessTextBlock.Visibility = Visibility.Collapsed;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //MessageBox.Show(ex.Message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    SignupErrorTextBlock.Text = ex.Message;
+                    SignupErrorTextBlock.Visibility= Visibility.Visible;
                 }
             }
         }

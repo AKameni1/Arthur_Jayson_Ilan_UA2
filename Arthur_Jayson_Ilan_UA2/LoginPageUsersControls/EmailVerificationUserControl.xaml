@@ -7,18 +7,23 @@
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2"
              mc:Ignorable="d" >
     
-    <Border x:Name="Container" Style="{StaticResource StyledFrameContainer}" Padding="10" Width="400" MaxHeight="230">
+    <Border x:Name="Container" Style="{StaticResource StyledFrameContainer}" Padding="10" Width="400" MaxHeight="300">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="V é r i f i c a t i o n  d e  l ' a d r e s s e  e - m a i l" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="20" Style="{StaticResource LabelTextStyle}" Width="214" LineHeight="2"/>
+            <TextBlock x:Name="Title" Text="V é r i f i c a t i o n  d e  l ' a d r e s s e  e - m a i l" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="20" Style="{StaticResource LabelTextStyle}" Width="214" LineHeight="2"/>
+            <TextBlock x:Name="TitleSuperAdmin" Text="A u t h e n t i f i c a t i o n  d u  s u p e r  a d m i n i s t r a t e u r" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="17" Style="{StaticResource LabelTextStyle}" Width="239" LineHeight="2" Visibility="Collapsed"/>
 
-            <StackPanel x:Name="EmailVerification" Margin="0,10" HorizontalAlignment="Center" Grid.Row="1">
+            <TextBlock x:Name="ResetErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}" Grid.Row="1" HorizontalAlignment="Center" TextAlignment="Center" />
+            <TextBlock x:Name="ResetSuccessTextBlock" Style="{StaticResource SuccessTextBlockStyle}" Grid.Row="1" HorizontalAlignment="Center" TextAlignment="Center" />
+
+            <StackPanel x:Name="EmailVerification" Margin="0,10" HorizontalAlignment="Center" Grid.Row="2">
                 <TextBlock Text="Saisissez votre adresse e-mail :" Style="{StaticResource LabelTextStyle}"/>
                 <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
                     <Grid>
@@ -34,7 +39,7 @@
                 <TextBlock x:Name="EmailErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
             </StackPanel>
 
-            <Grid Grid.Row="1" x:Name="SuperAdminAuthFields" Visibility="Collapsed">
+            <Grid Grid.Row="2" x:Name="SuperAdminAuthFields" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -84,8 +89,16 @@
 
             </Grid>
 
-            <Button x:Name="CheckOut" Content="Envoyez" Style="{StaticResource ButtonStyle}" Grid.Row="2" Click="VerifyEmailButton_Click"/>
-            <Button x:Name="SuperAdminCheckout" Content="Envoyez" Style="{StaticResource ButtonStyle}" Grid.Row="2" Click="AuthenticateSuperAdminButton_Click" Visibility="Collapsed"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="3">
+                <Grid Margin="17,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="CheckOut" Content="Envoyez" Style="{StaticResource ButtonStyle}" Click="VerifyEmailButton_Click" />
+                    <Button x:Name="SuperAdminCheckout" Content="Envoyez" Style="{StaticResource ButtonStyle}" Click="AuthenticateSuperAdminButton_Click" Visibility="Collapsed"/>
+                </Grid>
+                <Button Content="Retour" Style="{StaticResource ReturnButtonStyle}" Click="ReturnButton_Click" Margin="10,0"/>
+            </StackPanel>
         </Grid>
     </Border>
     

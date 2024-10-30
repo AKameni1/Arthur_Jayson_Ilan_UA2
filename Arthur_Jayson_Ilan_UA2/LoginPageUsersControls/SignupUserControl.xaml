@@ -17,6 +17,7 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -24,7 +25,10 @@
 
             <TextBlock Text="I n s c r i p t i o n" HorizontalAlignment="Center" FontSize="20" FontFamily="{StaticResource RobotoRegular}" Margin="0,15" Grid.Row="0" Grid.ColumnSpan="2"/>
 
-            <Grid Grid.Row="1">
+            <TextBlock x:Name="SignupErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" />
+            <TextBlock x:Name="SignupSuccessTextBlock" Style="{StaticResource SuccessTextBlockStyle}" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" />
+            
+            <Grid Grid.Row="2">
                 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -75,7 +79,7 @@
 
             </Grid>
 
-            <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Row="2" Grid.Column="1">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -126,9 +130,9 @@
 
             </Grid>
             
-            <Button Content="S'inscrire" Style="{StaticResource ButtonStyle}" Grid.Row="2" Grid.ColumnSpan="2" Click="RegisterButton_Click" />
+            <Button Content="S'inscrire" Style="{StaticResource ButtonStyle}" Grid.Row="3" Grid.ColumnSpan="2" Click="RegisterButton_Click" />
 
-            <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="3" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="4" Grid.ColumnSpan="2">
                 <TextBlock Text="Déjà un compte ? " Style="{StaticResource SecondaryTextStyle}"/>
                 <TextBlock Text="Connectez-vous!" Style="{StaticResource LinkTextStyle}" MouseDown="AlreadyHaveAccount_MouseDown"/>
             </StackPanel>

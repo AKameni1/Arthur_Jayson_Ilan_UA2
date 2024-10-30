@@ -43,11 +43,13 @@ namespace Arthur_Jayson_Ilan_UA2
 
         private void ResetAuthFields()
         {
+            Title.Visibility = Visibility.Visible;
             EmailVerification.Visibility = Visibility.Visible;
             CheckOut.Visibility = Visibility.Visible;
+            TitleSuperAdmin.Visibility = Visibility.Collapsed;
             SuperAdminAuthFields.Visibility = Visibility.Collapsed;
             SuperAdminCheckout.Visibility = Visibility.Collapsed;
-            Container.MaxHeight = 230;
+            Container.MaxHeight = 260;
         }
         private void TogglePasswordVisibility_Click(object sender, RoutedEventArgs e)
         {
@@ -80,15 +82,23 @@ namespace Arthur_Jayson_Ilan_UA2
             SuperAdminPasswordBox.Password = SuperAdminPasswordTextBox.Text;
         }
 
-        private void ShowSuperAdminAuthFields()
+        private async void ShowSuperAdminAuthFields()
         {
+            //MessageBox.Show("Veuillez entrer les informations actuelles de connexion pour le super admin.", "Authentification requise", MessageBoxButton.OK, MessageBoxImage.Information);
+            ResetSuccessTextBlock.Text = "Veuillez entrer les informations actuelles de connexion pour le super admin.";
+            ResetSuccessTextBlock.Visibility = Visibility.Visible;
+
+            await Task.Delay(2000);
+            ResetSuccessTextBlock.Visibility = Visibility.Collapsed;
+
             Container.MaxHeight = 320;
+            Title.Visibility = Visibility.Collapsed;
             EmailVerification.Visibility = Visibility.Collapsed;
             CheckOut.Visibility = Visibility.Collapsed;
+            TitleSuperAdmin.Visibility = Visibility.Visible;
             SuperAdminAuthFields.Visibility = Visibility.Visible;
             SuperAdminCheckout.Visibility = Visibility.Visible;
 
-            MessageBox.Show("Veuillez entrer les informations de connexion pour le super admin.", "Authentification requise", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void VerifyEmailButton_Click(object sender, RoutedEventArgs e)
@@ -128,22 +138,28 @@ namespace Arthur_Jayson_Ilan_UA2
             }
             else
             {
-                MessageBox.Show("Nom d'utilisateur ou mot de passe incorrect.", "Échec de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageBox.Show("Nom d'utilisateur ou mot de passe incorrect.", "Échec de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
+                ResetErrorTextBlock.Text = "Nom d'utilisateur ou mot de passe incorrect.";
             }
         }
 
-        private void ProceedToReset(User user)
+        private async void ProceedToReset(User user)
         {
+            ResetErrorTextBlock.Visibility = Visibility.Collapsed;
+            await Task.Delay(500);
+            ResetSuccessTextBlock.Text = "Adresse e-mail vérifiée avec succès.";
+            ResetSuccessTextBlock.Visibility = Visibility.Visible;
+
+            await Task.Delay(1000);
+
             var mainWindow = Application.Current.MainWindow as MainWindow;
 
             if (_resetType == "password")
             {
-                MessageBox.Show("Adresse e-mail vérifiée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                 mainWindow?.LoadNewUserControl(new ResetPasswordUserControl(user));
             }
             else if (_resetType == "username")
             {
-                MessageBox.Show("Adresse e-mail vérifiée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
                 mainWindow?.LoadNewUserControl(new ResetUsernameUserControl(user));
             }
         }
@@ -153,15 +169,12 @@ namespace Arthur_Jayson_Ilan_UA2
             bool isValid = true;
             string emailPattern = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
             string emailInput = EmailTextBox.Text.Trim();
+            EmailErrorTextBlock.Visibility = Visibility.Collapsed;
 
             if (string.IsNullOrEmpty(emailInput) || !Regex.IsMatch(emailInput, emailPattern))
             {
                 ShowEmailError("Veuillez entrer une adresse e-mail valide");
                 isValid = false;
-            }
-            else
-            {
-                EmailErrorTextBlock.Visibility= Visibility.Collapsed;
             }
 
             return isValid;
@@ -171,6 +184,11 @@ namespace Arthur_Jayson_Ilan_UA2
         {
             EmailErrorTextBlock.Text = message;
             EmailErrorTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void ReturnButton_Click(object sender, RoutedEventArgs e)
+        {
+            CommonMethods.ReturnToLoginUserControl();
         }
     }
 }

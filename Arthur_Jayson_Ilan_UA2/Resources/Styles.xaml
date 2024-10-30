@@ -76,7 +76,7 @@
         <Setter Property="Margin" Value="7,0,4,0"/>
 
         <!--Animation optionnelle-->
-        <Style.Triggers>
+        <!--<Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Trigger.EnterActions>
                     <BeginStoryboard>
@@ -97,7 +97,7 @@
                     </BeginStoryboard>
                 </Trigger.ExitActions>
             </Trigger>
-        </Style.Triggers>
+        </Style.Triggers>-->
 
     </Style>
 
@@ -148,6 +148,45 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ReturnButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="159"/>
+        <Setter Property="Height" Value="37"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontFamily" Value="{StaticResource RobotoMedium}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="ButtonBorder"
+                        Width="159"
+                        Height="37"
+                        CornerRadius="10"
+                        Background="#B4DDE6"
+                        BorderBrush="#B4DDE6"
+                        BorderThickness="1">
+                        <Border.Effect>
+                            <BlurEffect Radius="0"/>
+                        </Border.Effect>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Déclencheur de survol (Hover) -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="#A0CED8"/>
+                            <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#A0CED8"/>
+                        </Trigger>
+
+                        <!-- Déclencheur de clic (Pressed) -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="#88BBC8"/>
+                            <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#88BBC8"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="12"/>
         <!--<Setter Property="Foreground" Value="White"/>-->
@@ -180,6 +219,17 @@
 
     <Style x:Key="ErrorTextBlockStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="#E57373"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
+        <Setter Property="FontFamily" Value="{StaticResource RobotoRegular}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Setter Property="Opacity" Value="0.9"/>
+    </Style>
+
+    <Style x:Key="SuccessTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#2AAA63"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="TextAlignment" Value="Justify"/>
         <Setter Property="FontFamily" Value="{StaticResource RobotoRegular}"/>

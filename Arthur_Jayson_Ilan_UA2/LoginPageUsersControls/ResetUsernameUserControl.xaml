@@ -7,9 +7,10 @@
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2"
              mc:Ignorable="d" >
 
-    <Border Style="{StaticResource StyledFrameContainer}" Padding="10" Width="350" MaxHeight="240">
+    <Border Style="{StaticResource StyledFrameContainer}" Padding="10" Width="380" MaxHeight="240">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -17,7 +18,10 @@
 
             <TextBlock Text="R é i n i t i a l i s a t i o n  d u  n o m  d ' u t i l i s a t e u r" Style="{StaticResource LabelTextStyle}" FontSize="20" Width="255" TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center"/>
 
-            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="1">
+            <TextBlock x:Name="ResetErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}" Grid.Row="1" HorizontalAlignment="Center" />
+            <TextBlock x:Name="ResetSuccessTextBlock" Style="{StaticResource SuccessTextBlockStyle}" Grid.Row="1" HorizontalAlignment="Center" />
+
+            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="2">
                 <TextBlock Text="Nouveau nom d'utilisateur :" Style="{StaticResource LabelTextStyle}"/>
                 <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
                     <Grid>
@@ -33,7 +37,10 @@
                 <TextBlock x:Name="UsernameErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
             </StackPanel>
 
-            <Button Content="Confirmer" Style="{StaticResource ButtonStyle}" Grid.Row="2" Click="ConfirmButton_Click"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="3">
+                <Button Content="Confirmer" Style="{StaticResource ButtonStyle}" Click="ConfirmButton_Click" Margin="10,0"/>
+                <Button Content="Retour" Style="{StaticResource ReturnButtonStyle}" Click="ReturnButton_Click" Margin="10,0"/>
+            </StackPanel>
         </Grid>
     </Border>
     

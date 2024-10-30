@@ -22,7 +22,7 @@ namespace Arthur_Jayson_Ilan_UA2
     /// </summary>
     public partial class ResetUsernameUserControl : UserControl
     {
-        private User _currentUser;
+        private readonly User _currentUser;
         public ResetUsernameUserControl(User user)
         {
             InitializeComponent();
@@ -59,23 +59,38 @@ namespace Arthur_Jayson_Ilan_UA2
             return true;
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             if (ValidateUsername())
             {
                 try
                 {
+                    ResetErrorTextBlock.Visibility = Visibility.Collapsed;
                     _currentUser.ChangeUsername(UsernameTextBox.Text.Trim(), App.UserManager);
-                    MessageBox.Show("Nom d'utilisateur mis à jour avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageBox.Show("Nom d'utilisateur mis à jour avec succès !", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    await Task.Delay(500);
+                    ResetSuccessTextBlock.Text = "Nom d'utilisateur mis à jour avec succès !";
+                    ResetSuccessTextBlock.Visibility = Visibility.Visible;
+
+                    await Task.Delay(1000);
 
                     var mainWindow = Application.Current.MainWindow as MainWindow;
                     mainWindow?.LoadNewUserControl(new LoginUserControl());
+                    ResetSuccessTextBlock.Visibility = Visibility.Collapsed;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Erreur : {ex.Message}");
+                    //MessageBox.Show($"Erreur : {ex.Message}");
+                    ResetErrorTextBlock.Text = ex.Message;
+                    ResetErrorTextBlock.Visibility= Visibility.Visible;
                 }
             }
+        }
+
+        private void ReturnButton_Click(object sender, RoutedEventArgs e)
+        {
+            CommonMethods.ReturnToLoginUserControl();
         }
     }
 }

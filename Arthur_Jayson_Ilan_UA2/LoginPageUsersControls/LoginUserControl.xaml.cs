@@ -104,6 +104,7 @@ namespace Arthur_Jayson_Ilan_UA2
 
                 if (user != null)
                 {
+                    LoginErrorTextBlock.Visibility = Visibility.Collapsed;
                     if (user.IsSuperAdmin)
                     {
                         MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -115,7 +116,9 @@ namespace Arthur_Jayson_Ilan_UA2
                 }
                 else
                 {
-                    MessageBox.Show("Nom d'utilisateur ou mot de passe incorrect.", "Échec de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //MessageBox.Show("Nom d'utilisateur ou mot de passe incorrect.", "Échec de connexion", MessageBoxButton.OK, MessageBoxImage.Error);
+                    LoginErrorTextBlock.Text = "Nom d'utilisateur ou mot de passe incorrect.";
+                    LoginErrorTextBlock.Visibility = Visibility.Visible;
                 }
             }
         }

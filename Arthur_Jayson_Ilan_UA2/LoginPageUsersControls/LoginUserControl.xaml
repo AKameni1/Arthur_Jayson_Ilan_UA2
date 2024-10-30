@@ -16,11 +16,14 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Text="C o n n e x i o n" HorizontalAlignment="Center" FontSize="20" FontFamily="{StaticResource RobotoRegular}" Margin="0,0,0,10" Grid.Row="0"/>
 
-            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="1">
+            <TextBlock x:Name="LoginErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}" Grid.Row="1" HorizontalAlignment="Center" />
+
+            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="2">
                 <TextBlock Text="Nom d'utilisateur :" Style="{StaticResource LabelTextStyle}"/>
                 <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
                     <Grid>
@@ -36,7 +39,7 @@
                 <TextBlock x:Name="UsernameErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
             </StackPanel>
 
-            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="2">
+            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="3">
                 <TextBlock Text="Mot de passe :" Style="{StaticResource LabelTextStyle}"/>
                 <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}" >
                     <Grid>
@@ -62,14 +65,14 @@
                 <TextBlock x:Name="PasswordErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"/>
             </StackPanel>
 
-            <Button Content="Se connecter" Margin="0,10" Style="{StaticResource ButtonStyle}" Grid.Row="3" Click="ConnectButton_Click"/>
+            <Button Content="Se connecter" Margin="0,10" Style="{StaticResource ButtonStyle}" Grid.Row="4" Click="ConnectButton_Click"/>
 
-            <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="4">
+            <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="5">
                 <TextBlock Text="Pas encore de compte ? " Style="{StaticResource SecondaryTextStyle}"/>
                 <TextBlock Text="Inscrivez-vous!" Style="{StaticResource LinkTextStyle}" MouseDown="NotHaveAccount_MouseDown"/>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3,0,0" Grid.Row="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3,0,0" Grid.Row="6">
                 <TextBlock x:Name="ForgotPasswordText"
                            Text="Mot de passe oublié ?" 
                            Style="{StaticResource SecondaryLinkTextStyle}"

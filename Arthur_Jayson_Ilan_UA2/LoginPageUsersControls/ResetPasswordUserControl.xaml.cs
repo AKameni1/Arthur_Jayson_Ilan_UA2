@@ -24,7 +24,7 @@ namespace Arthur_Jayson_Ilan_UA2
     /// </summary>
     public partial class ResetPasswordUserControl : UserControl
     {
-        private User CurrentUser;
+        private readonly User CurrentUser;
         public ResetPasswordUserControl(User user)
         {
             InitializeComponent();
@@ -97,9 +97,15 @@ namespace Arthur_Jayson_Ilan_UA2
             PasswordErrorTextBlock.Visibility = Visibility.Collapsed;
             ConfirmPasswordErrorTextBlock.Visibility = Visibility.Collapsed;
 
-            if (password.Length < 6)
+            if (password.Length < 12)
             {
-                PasswordErrorTextBlock.Text = "Le mot de passe doit contenir au moins 6 caractères.";
+                PasswordErrorTextBlock.Text = "Le mot de passe doit contenir au moins 12 caractères.";
+                PasswordErrorTextBlock.Visibility = Visibility.Visible;
+                return false;
+            }
+            else if (!(password.Any(char.IsUpper) && password.Any(char.IsLower) && password.Any(char.IsDigit)))
+            {
+                PasswordErrorTextBlock.Text = "Le mot de passe doit contenir au moins une majuscule, une minuscule, et un chiffre.";
                 PasswordErrorTextBlock.Visibility = Visibility.Visible;
                 return false;
             }
@@ -116,31 +122,50 @@ namespace Arthur_Jayson_Ilan_UA2
             return true;
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
+            ResetErrorTextBlock.Visibility = Visibility.Collapsed;
             if (ValidatePassword())
             {
                 try
                 {
+                    ResetErrorTextBlock.Visibility = Visibility.Collapsed;
                     App.UserManager.UpdatePassword(CurrentUser, PasswordBox.Password);
-                    MessageBox.Show("Mot de passe mis à jour avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageBox.Show("Mot de passe mis à jour avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    await Task.Delay(1000);
+                    ResetSuccessTextBlock.Text = "Mot de passe mis à jour avec succès.";
+                    ResetSuccessTextBlock.Visibility = Visibility.Visible;
+
+                    await Task.Delay(1000);
 
                     var mainWindow = Application.Current.MainWindow as MainWindow;
                     mainWindow?.LoadNewUserControl(new LoginUserControl());
                 }
-                catch (InvalidOperationException ex)
-                {
-                    MessageBox.Show($"Erreur de mise à jour : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                catch (ArgumentException ex)
-                {
-                    MessageBox.Show($"Erreur de validation : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                //catch (InvalidOperationException ex)
+                //{
+                //    //MessageBox.Show($"Erreur de mise à jour : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                //    ResetErrorTextBlock.Text = $"Erreur de mise à jour : {ex.Message}";
+                //    ResetErrorTextBlock.Visibility = Visibility.Visible;
+                //}
+                //catch (ArgumentException ex)
+                //{
+                //    //MessageBox.Show($"Erreur de validation : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                //    ResetErrorTextBlock.Text = ex.Message;
+                //    ResetErrorTextBlock.Visibility = Visibility.Visible;
+                //}
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Une erreur inattendue s'est produite : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //MessageBox.Show($"Une erreur inattendue s'est produite : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ResetErrorTextBlock.Text = $"Une erreur inattendue s'est produite : {ex.Message}";
+                    ResetErrorTextBlock.Visibility = Visibility.Visible;
                 }
             }
+        }
+
+        private void ReturnButton_Click(object sender, RoutedEventArgs e)
+        {
+            CommonMethods.ReturnToLoginUserControl();
         }
     }
 }
