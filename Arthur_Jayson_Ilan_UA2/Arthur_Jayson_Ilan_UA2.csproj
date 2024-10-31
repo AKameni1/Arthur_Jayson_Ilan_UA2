@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>favicon_io\favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,11 @@
     <None Remove="Assets\Fonts\Roboto\Roboto-Thin.ttf" />
     <None Remove="Assets\Images\default.png" />
     <None Remove="Assets\Images\img_background.jpg" />
+    <None Remove="favicon_io\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="favicon_io\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
