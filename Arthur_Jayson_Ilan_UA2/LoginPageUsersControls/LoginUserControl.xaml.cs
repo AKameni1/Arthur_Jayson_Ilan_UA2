@@ -74,6 +74,7 @@ namespace Arthur_Jayson_Ilan_UA2
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
+            LoginErrorTextBlock.Visibility = Visibility.Collapsed;
             bool hasError = false;
 
             if (string.IsNullOrEmpty(UsernameTextBox.Text))
@@ -104,7 +105,6 @@ namespace Arthur_Jayson_Ilan_UA2
 
                 if (user != null)
                 {
-                    LoginErrorTextBlock.Visibility = Visibility.Collapsed;
                     if (user.IsSuperAdmin)
                     {
                         MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
