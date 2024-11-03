@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -15,9 +17,13 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
     public class ResetPasswordViewModel : INotifyPropertyChanged
     {
 
+        // Flags pour éviter les boucles infinies
+        private bool _isUpdatingPassword = false;
+        private bool _isUpdatingConfirmPassword = false;
+
         // Propriétés liées aux champs de mot de passe
-        private string _password = string.Empty;
-        public string Password
+        private SecureString _password = new SecureString();
+        public SecureString Password
         {
             get => _password;
             set
@@ -27,12 +33,25 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     _password = value;
                     OnPropertyChanged(nameof(Password));
                     PasswordError = string.Empty;
+
+                    if (!_isUpdatingPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingPassword = true;
+                            PasswordUnsecure = ConvertToUnsecureString(_password);
+                        }
+                        finally
+                        {
+                            _isUpdatingPassword = false;
+                        }
+                    }
                 }
             }
         }
 
-        private string _confirmPassword = string.Empty;
-        public string ConfirmPassword
+        private SecureString _confirmPassword = new SecureString();
+        public SecureString ConfirmPassword
         {
             get => _confirmPassword;
             set
@@ -42,6 +61,74 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     _confirmPassword = value;
                     OnPropertyChanged(nameof(ConfirmPassword));
                     ConfirmPasswordError = string.Empty;
+
+                    if (!_isUpdatingConfirmPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingConfirmPassword = true;
+                            ConfirmPasswordUnsecure = ConvertToUnsecureString(_confirmPassword);
+                        }
+                        finally
+                        {
+                            _isUpdatingConfirmPassword = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Propriétés pour afficher les mots de passe en clair
+        private string _passwordUnsecure = string.Empty;
+        public string PasswordUnsecure
+        {
+            get => _passwordUnsecure;
+            set
+            {
+                if (_passwordUnsecure != value)
+                {
+                    _passwordUnsecure = value;
+                    OnPropertyChanged(nameof(PasswordUnsecure));
+
+                    if (!_isUpdatingPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingPassword = true;
+                            UpdateSecurePassword(value, ref _password);
+                        }
+                        finally
+                        {
+                            _isUpdatingPassword = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private string _confirmPasswordUnsecure = string.Empty;
+        public string ConfirmPasswordUnsecure
+        {
+            get => _confirmPasswordUnsecure;
+            set
+            {
+                if (_confirmPasswordUnsecure != value)
+                {
+                    _confirmPasswordUnsecure = value;
+                    OnPropertyChanged(nameof(ConfirmPasswordUnsecure));
+
+                    if (!_isUpdatingConfirmPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingConfirmPassword = true;
+                            UpdateSecurePassword(value, ref _confirmPassword);
+                        }
+                        finally
+                        {
+                            _isUpdatingConfirmPassword = false;
+                        }
+                    }
                 }
             }
         }
@@ -163,8 +250,14 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             {
                 try
                 {
+                    // Conversion de SecureString en string de manière sécurisée
+                    string? password = ConvertToUnsecureString(Password);
+
                     // Mise à jour du mot de passe via le UserService
-                    App.UserService.UpdatePassword(_currentUser, Password);
+                    App.UserService.UpdatePassword(_currentUser, password);
+
+                    // Effacer la chaîne en mémoire
+                    password = null;
 
                     // Affichage du message de succès
                     ResetSuccessMessage = "Mot de passe mis à jour avec succès.";
@@ -205,30 +298,68 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 
             bool isValid = true;
 
-            if (Password.Length < 12)
+            string? password = ConvertToUnsecureString(Password);
+            string? confirmPassword = ConvertToUnsecureString(ConfirmPassword);
+
+            if (password.Length < 12)
             {
                 PasswordError = "Le mot de passe doit contenir au moins 12 caractères.";
                 isValid = false;
             }
-            else if (!Password.Any(char.IsUpper) || !Password.Any(char.IsLower) || !Password.Any(char.IsDigit))
+            else if (!password.Any(char.IsUpper) || !password.Any(char.IsLower) || !password.Any(char.IsDigit))
             {
                 PasswordError = "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre.";
                 isValid = false;
             }
             else
             {
-                if (Password != ConfirmPassword)
+                if (password != confirmPassword)
                 {
                     ConfirmPasswordError = "Les mots de passe ne correspondent pas.";
                     isValid = false;
                 }
             }
 
-            
+            // Effacer les chaînes en mémoire
+            password = null;
+            confirmPassword = null;
 
             return isValid;
         }
 
+        // Méthode pour convertir SecureString en string de manière sécurisée
+        private static string ConvertToUnsecureString(SecureString secureString)
+        {
+            if (secureString == null)
+                return string.Empty;
+
+            IntPtr unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);
+                return Marshal.PtrToStringUni(unmanagedString) ?? string.Empty;
+            }
+            finally
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+        // Méthode pour mettre à jour le SecureString à partir d'un string
+        private static void UpdateSecurePassword(string unsecurePassword, ref SecureString securePassword)
+        {
+            // Effacer le SecureString existant
+            securePassword.Clear();
+
+            if (!string.IsNullOrEmpty(unsecurePassword))
+            {
+                foreach (char c in unsecurePassword)
+                {
+                    securePassword.AppendChar(c);
+                }
+                securePassword.MakeReadOnly();
+            }
+        }
 
         // Implémentation de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;

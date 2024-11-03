@@ -102,12 +102,12 @@
                             <!-- PasswordBox avec PasswordBoxHelper -->
                             <PasswordBox Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"
                                          helpers:PasswordBoxHelper.Attach="True"
-                                         helpers:PasswordBoxHelper.Password="{Binding SuperAdminPassword, Mode=TwoWay}"
+                                         helpers:PasswordBoxHelper.SecurePassword="{Binding SuperAdminPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding IsSuperAdminPasswordVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
 
                             <!-- TextBox visible lorsque le mot de passe est visible -->
                             <TextBox Grid.Column="1" Style="{StaticResource InputTextBoxStyle}"
-                                     Text="{Binding SuperAdminPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding SuperAdminPasswordUnsecure, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding IsSuperAdminPasswordVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <!-- ToggleButton pour la visibilité du mot de passe -->

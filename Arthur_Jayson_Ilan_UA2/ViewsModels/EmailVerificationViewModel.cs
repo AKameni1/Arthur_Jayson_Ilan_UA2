@@ -11,12 +11,17 @@ using Arthur_Jayson_Ilan_UA2.Models;
 using Arthur_Jayson_Ilan_UA2.Commands;
 using Arthur_Jayson_Ilan_UA2.Services;
 using Arthur_Jayson_Ilan_UA2.Views;
+using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 {
     public class EmailVerificationViewModel : INotifyPropertyChanged
     {
         private readonly INavigationService _navigationService;
+
+        // Flag pour éviter les boucles infinies
+        private bool _isUpdatingSuperAdminPassword = false;
 
         // Propriétés pour les champs de saisie
         private string _email = string.Empty;
@@ -63,8 +68,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private string _superAdminPassword = string.Empty;
-        public string SuperAdminPassword
+        private SecureString _superAdminPassword = new SecureString();
+        public SecureString SuperAdminPassword
         {
             get => _superAdminPassword;
             set
@@ -74,6 +79,47 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     _superAdminPassword = value;
                     OnPropertyChanged(nameof(SuperAdminPassword));
                     SuperAdminPasswordError = string.Empty;
+
+                    if (!_isUpdatingSuperAdminPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingSuperAdminPassword = true;
+                            SuperAdminPasswordUnsecure = ConvertToUnsecureString(_superAdminPassword);
+                        }
+                        finally
+                        {
+                            _isUpdatingSuperAdminPassword = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Propriété pour afficher les mots de passe en clair
+        private string _superAdminPasswordUnsecure = string.Empty;
+        public string SuperAdminPasswordUnsecure
+        {
+            get => _superAdminPasswordUnsecure;
+            set
+            {
+                if (_superAdminPasswordUnsecure != value)
+                {
+                    _superAdminPasswordUnsecure = value;
+                    OnPropertyChanged(nameof(SuperAdminPasswordUnsecure));
+
+                    if (!_isUpdatingSuperAdminPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingSuperAdminPassword = true;
+                            UpdateSecurePassword(value, ref _superAdminPassword);
+                        }
+                        finally
+                        {
+                            _isUpdatingSuperAdminPassword = false;
+                        }
+                    }
                 }
             }
         }
@@ -246,7 +292,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         {
             var superAdmin = App.UserService.FindUserByEmail(Email.Trim());
 
-            if (superAdmin != null && superAdmin.VerifyPassword(SuperAdminPassword) && superAdmin.Username == SuperAdminUsername.Trim())
+            // Conversion de SecureString en string de manière sécurisée
+            string? superAdminPassword = ConvertToUnsecureString(SuperAdminPassword);
+
+            if (superAdmin != null && superAdmin.VerifyPassword(superAdminPassword) && superAdmin.Username == SuperAdminUsername.Trim())
             {
                 await ProceedToResetAsync(superAdmin);
             }
@@ -254,6 +303,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             {
                 ShowSuperAdminAuthError("Nom d'utilisateur ou mot de passe incorrect.");
             }
+
+            // Effacer la chaîne en mémoire
+            superAdminPassword = null;
         }
 
         // Méthode pour revenir à la vue précédente
@@ -326,6 +378,40 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         private void ToggleSuperAdminPasswordVisibility(object? parameter)
         {
             IsSuperAdminPasswordVisible = !IsSuperAdminPasswordVisible;
+        }
+
+        // Méthode pour convertir SecureString en string de manière sécurisée
+        private static string ConvertToUnsecureString(SecureString secureString)
+        {
+            if (secureString == null)
+                return string.Empty;
+
+            IntPtr unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);
+                return Marshal.PtrToStringUni(unmanagedString) ?? string.Empty;
+            }
+            finally
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+        // Méthode pour mettre à jour le SecureString à partir d'un string
+        private static void UpdateSecurePassword(string unsecurePassword, ref SecureString securePassword)
+        {
+            // Effacer le SecureString existant
+            securePassword.Clear();
+
+            if (!string.IsNullOrEmpty(unsecurePassword))
+            {
+                foreach (char c in unsecurePassword)
+                {
+                    securePassword.AppendChar(c);
+                }
+                securePassword.MakeReadOnly();
+            }
         }
 
         // Implémentation de INotifyPropertyChanged

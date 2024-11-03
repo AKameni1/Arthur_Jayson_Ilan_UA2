@@ -63,12 +63,12 @@
                         <!-- PasswordBox -->
                         <PasswordBox x:Name="PasswordBox" Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"
                                      helpers:PasswordBoxHelper.Attach="True"
-                                     helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}"
+                                     helpers:PasswordBoxHelper.SecurePassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
 
                         <!-- TextBox pour afficher le mot de passe en clair -->
                         <TextBox x:Name="PasswordTextBox" Grid.Column="1" Style="{StaticResource InputTextBoxStyle}"
-                                 Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding PasswordUnsecure, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Visibility="{Binding IsPasswordVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- ToggleButton pour basculer la visibilité -->

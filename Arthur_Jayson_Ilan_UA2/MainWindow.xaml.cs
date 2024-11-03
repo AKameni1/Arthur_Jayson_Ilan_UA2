@@ -18,7 +18,7 @@ namespace Arthur_Jayson_Ilan_UA2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly INavigationService _navigationService;
+        //private readonly INavigationService _navigationService;
 
         private BitmapImage? _backgroundImage;
         public MainWindow()
@@ -26,7 +26,7 @@ namespace Arthur_Jayson_Ilan_UA2
             InitializeComponent();
             PreloadBackgroundImage();
 
-            _navigationService = new Services.NavigationService(this);
+            //_navigationService = new Services.NavigationService(this);
 
             MainContentControl.Content = new LoginView();
         }

@@ -70,11 +70,11 @@
                             <Icon:PackIconMaterial Kind="Lock" Style="{StaticResource IconStyle}"/>
                             <PasswordBox x:Name="PasswordBox" Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"
                                          helpers:PasswordBoxHelper.Attach="True"
-                                         helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}"
+                                         helpers:PasswordBoxHelper.SecurePassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
                             
                             <TextBox x:Name="PasswordTextBox" Grid.Column="1" Style="{StaticResource InputTextBoxStyle}"
-                                     Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding PasswordUnsecure, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding IsPasswordVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             
                             <ToggleButton x:Name="TogglePasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand" Grid.Column="2"
@@ -133,11 +133,11 @@
                             <Icon:PackIconMaterial Kind="Lock" Style="{StaticResource IconStyle}"/>
                             <PasswordBox x:Name="ConfirmPasswordBox" Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"
                                          helpers:PasswordBoxHelper.Attach="True"
-                                         helpers:PasswordBoxHelper.Password="{Binding ConfirmPassword, Mode=TwoWay}"
+                                         helpers:PasswordBoxHelper.SecurePassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding IsConfirmPasswordVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             
                             <TextBox x:Name="ConfirmPasswordTextBox" Grid.Column="1" Style="{StaticResource InputTextBoxStyle}"
-                                     Text="{Binding ConfirmPassword, Mode=TwoWay}"
+                                     Text="{Binding ConfirmPasswordUnsecure, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding IsConfirmPasswordVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             
                             <ToggleButton x:Name="ToggleConfirmPasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand" Grid.Column="2" 

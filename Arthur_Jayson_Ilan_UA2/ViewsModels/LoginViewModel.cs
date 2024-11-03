@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,6 +19,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
     public class LoginViewModel : INotifyPropertyChanged
     {
         private readonly INavigationService _navigationService;
+
+        // Flag pour éviter les boucles infinies
+        private bool _isUpdatingPassword = false;
 
         public LoginViewModel(INavigationService navigationService)
         {
@@ -44,8 +49,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private string _password = string.Empty;
-        public string Password
+        private SecureString _password = new SecureString();
+        public SecureString Password
         {
             get => _password;
             set
@@ -55,6 +60,47 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     _password = value;
                     OnPropertyChanged(nameof(Password));
                     PasswordError = string.Empty;
+
+                    if (!_isUpdatingPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingPassword = true;
+                            PasswordUnsecure = ConvertToUnsecureString(_password);
+                        }
+                        finally
+                        {
+                            _isUpdatingPassword = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Propriété pour afficher les mots de passe en clair
+        private string _passwordUnsecure = string.Empty;
+        public string PasswordUnsecure
+        {
+            get => _passwordUnsecure;
+            set
+            {
+                if (_passwordUnsecure != value)
+                {
+                    _passwordUnsecure = value;
+                    OnPropertyChanged(nameof(PasswordUnsecure));
+
+                    if (!_isUpdatingPassword)
+                    {
+                        try
+                        {
+                            _isUpdatingPassword = true;
+                            UpdateSecurePassword(value, ref _password);
+                        }
+                        finally
+                        {
+                            _isUpdatingPassword = false;
+                        }
+                    }
                 }
             }
         }
@@ -87,7 +133,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private string _passwordError = "";
+        private string _passwordError = string.Empty;
         public string PasswordError
         {
             get => _passwordError;
@@ -127,6 +173,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 
             bool hasError = false;
 
+            // Conversion de SecureString en string de manière sécurisée
+            string? password = ConvertToUnsecureString(Password);
+
             if (string.IsNullOrWhiteSpace(Username))
             {
                 UsernameError = "Veuillez entrer un nom d'utilisateur.";
@@ -137,7 +186,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                 UsernameError = string.Empty;
             }
 
-            if (string.IsNullOrWhiteSpace(Password))
+            if (string.IsNullOrWhiteSpace(password))
             {
                 PasswordError = "Veuillez entrer un mot de passe.";
                 hasError= true;
@@ -149,7 +198,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 
             if (!hasError)
             {
-                var user = App.UserService?.Authenticate(Username, Password);
+                var user = App.UserService?.Authenticate(Username, password);
+
+                // Effacer la chaîne en mémoire
+                password = null;
 
                 if (user != null)
                 {
@@ -188,6 +240,40 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             {
                 // Implémenter la navigation vers la vue de récupération des identifiants
                 _navigationService.NavigateTo(new EmailVerificationView(resetType));
+            }
+        }
+
+        // Méthode pour convertir SecureString en string de manière sécurisée
+        private static string ConvertToUnsecureString(SecureString secureString)
+        {
+            if (secureString == null)
+                return string.Empty;
+
+            IntPtr unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);
+                return Marshal.PtrToStringUni(unmanagedString) ?? string.Empty;
+            }
+            finally
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
+
+        // Méthode pour mettre à jour le SecureString à partir d'un string
+        private static void UpdateSecurePassword(string unsecurePassword, ref SecureString securePassword)
+        {
+            // Effacer le SecureString existant
+            securePassword.Clear();
+
+            if (!string.IsNullOrEmpty(unsecurePassword))
+            {
+                foreach (char c in unsecurePassword)
+                {
+                    securePassword.AppendChar(c);
+                }
+                securePassword.MakeReadOnly();
             }
         }
 
