@@ -1,0 +1,130 @@
+﻿<UserControl x:Class="Arthur_Jayson_Ilan_UA2.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels"
+             xmlns:helpers="clr-namespace:Arthur_Jayson_Ilan_UA2.Helpers"
+             xmlns:converters="clr-namespace:Arthur_Jayson_Ilan_UA2.Converters"
+             xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views"
+             mc:Ignorable="d">
+
+    <Border Style="{StaticResource StyledFrameContainer}" Padding="4" Width="346" MaxHeight="400">
+        <Grid Margin="10" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Titre -->
+            <TextBlock Text="C o n n e x i o n" HorizontalAlignment="Center" FontSize="20" FontFamily="{StaticResource RobotoRegular}" Margin="0,0,0,10" Grid.Row="0"/>
+
+            <!-- Message d'erreur de connexion -->
+            <TextBlock x:Name="LoginErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}" Grid.Row="1" HorizontalAlignment="Center"
+                       Text="{Binding LoginErrorMessage}" Visibility="{Binding LoginErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+            <!-- Champ Nom d'utilisateur -->
+            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="2">
+                <TextBlock Text="Nom d'utilisateur :" Style="{StaticResource LabelTextStyle}"/>
+                <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Icon:PackIconMaterial Kind="Account" Style="{StaticResource IconStyle}"/>
+                        <TextBox x:Name="UsernameTextBox" Style="{StaticResource InputTextBoxStyle}" Grid.Column="1"
+                                 Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock x:Name="UsernameErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"
+                           Text="{Binding UsernameError}" Visibility="{Binding UsernameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
+
+            <!-- Champ Mot de passe -->
+            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="3">
+                <TextBlock Text="Mot de passe :" Style="{StaticResource LabelTextStyle}"/>
+                <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Icon:PackIconMaterial Kind="Lock" Style="{StaticResource IconStyle}"/>
+
+                        <!-- PasswordBox -->
+                        <PasswordBox x:Name="PasswordBox" Grid.Column="1" Style="{StaticResource InputPasswordBoxStyle}"
+                                     helpers:PasswordBoxHelper.Attach="True"
+                                     helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}"
+                                     Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+
+                        <!-- TextBox pour afficher le mot de passe en clair -->
+                        <TextBox x:Name="PasswordTextBox" Grid.Column="1" Style="{StaticResource InputTextBoxStyle}"
+                                 Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                                 Visibility="{Binding IsPasswordVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- ToggleButton pour basculer la visibilité -->
+                        <ToggleButton x:Name="TogglePasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand" Grid.Column="2"
+                                      IsChecked="{Binding IsPasswordVisible}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Icon:PackIconMaterial Style="{StaticResource IconStyle}"
+                                                           Kind="{Binding IsPasswordVisible, Converter={StaticResource BoolToIconKindConverter}}"/>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                    </Grid>
+                </Border>
+
+                <TextBlock x:Name="PasswordErrorTextBlock" Style="{StaticResource ErrorTextBlockStyle}"
+                           Text="{Binding PasswordError}" Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
+
+            <!-- Bouton de connexion -->
+            <Button Content="Se connecter" Margin="0,10" Style="{StaticResource ButtonStyle}" Grid.Row="4"
+                    Command="{Binding ConnectCommand}"/>
+
+            <!-- Liens pour l'inscription et la récupération des identifiants -->
+            <StackPanel Orientation="Horizontal" Margin="5,10,5,5" HorizontalAlignment="Center" Grid.Row="5">
+                <TextBlock Text="Pas encore de compte ? " Style="{StaticResource SecondaryTextStyle}"/>
+                <TextBlock Text="Inscrivez-vous!" Style="{StaticResource LinkTextStyle}">
+                    <TextBlock.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding NotHaveAccountCommand}" />
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3,0,0" Grid.Row="6">
+                <TextBlock Name="ForgotPasswordText"
+                           Text="Mot de passe oublié ?"
+                           Background="Transparent"
+                           Style="{StaticResource SecondaryLinkTextStyle}">
+                    <TextBlock.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding ResetDataCommand}" CommandParameter="password"/>
+                    </TextBlock.InputBindings>
+                </TextBlock>
+                
+                <TextBlock Text=" | " FontFamily="{StaticResource RobotoRegular}"/>
+                
+                <TextBlock Name="ForgotUsernameText"
+                           Text="Nom d'utilisateur oublié ?" 
+                           Background="Transparent"
+                           Style="{StaticResource SecondaryLinkTextStyle}">
+                    <TextBlock.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding ResetDataCommand}" CommandParameter="username"/>
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

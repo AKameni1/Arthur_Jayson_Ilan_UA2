@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Arthur_Jayson_Ilan_UA2.Views.ResetUsernameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views"
+             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels"
+             xmlns:helpers="clr-namespace:Arthur_Jayson_Ilan_UA2.Helpers"
+             xmlns:converters="clr-namespace:Arthur_Jayson_Ilan_UA2.Converters"
+             mc:Ignorable="d" >
+
+    <Border Style="{StaticResource StyledFrameContainer}" Padding="10" Width="380" MaxHeight="240">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Titre -->
+            <TextBlock Text="R é i n i t i a l i s a t i o n  d u  n o m  d ' u t i l i s a t e u r" Style="{StaticResource LabelTextStyle}" 
+                       FontSize="20" Width="255" TextAlignment="Center" 
+                       TextWrapping="Wrap" HorizontalAlignment="Center"/>
+
+            <!-- Messages d'Erreur et de Succès -->
+            <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <TextBlock Text="{Binding ResetErrorMessage}" 
+                           Style="{StaticResource ErrorTextBlockStyle}" 
+                           Visibility="{Binding ResetErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" 
+                           TextWrapping="Wrap" 
+                           TextAlignment="Center"/>
+                <TextBlock Text="{Binding ResetSuccessMessage}" 
+                           Style="{StaticResource SuccessTextBlockStyle}" 
+                           Visibility="{Binding ResetSuccessMessage, Converter={StaticResource StringToVisibilityConverter}}" 
+                           TextWrapping="Wrap" 
+                           TextAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Champs de Nom d'Utilisateur -->
+            <StackPanel Margin="0,10" HorizontalAlignment="Center" Grid.Row="2">
+                <TextBlock Text="Nouveau nom d'utilisateur :" Style="{StaticResource LabelTextStyle}"/>
+                <Border Margin="0,2,0,10" Style="{StaticResource InputBorderStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Icon:PackIconMaterial Kind="Account" Style="{StaticResource IconStyle}"/>
+                        <TextBox Style="{StaticResource InputTextBoxStyle}" Grid.Column="1"
+                                 Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock Style="{StaticResource ErrorTextBlockStyle}"
+                           Text="{Binding UsernameError}" 
+                           Visibility="{Binding UsernameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
+
+            <!-- Boutons -->
+            <StackPanel Orientation="Horizontal" Grid.Row="3">
+                <Button Content="Confirmer" Style="{StaticResource ButtonStyle}" Margin="10,0"
+                        Command="{Binding ConfirmCommand}"/>
+                <Button Content="Retour" Style="{StaticResource ReturnButtonStyle}" Margin="10,0"
+                        Command="{Binding ReturnCommand}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

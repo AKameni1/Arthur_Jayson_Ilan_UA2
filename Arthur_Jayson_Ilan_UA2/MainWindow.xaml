@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
-        ResizeMode="NoResize" Height="530" Width="800" Background="AliceBlue">
+        ResizeMode="NoResize" Height="600" Width="800" Background="AliceBlue">
 
     <Grid>
         <ProgressBar x:Name="LoadingSpinner" IsIndeterminate="True" Width="200" Height="20" 

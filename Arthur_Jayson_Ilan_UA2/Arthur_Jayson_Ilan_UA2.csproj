@@ -41,10 +41,4 @@
     <Resource Include="Assets\Images\img_background.jpg" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Views\" />
-    <Folder Include="ViewsModels\" />
-  </ItemGroup>
-
 </Project>
