@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Arthur_Jayson_Ilan_UA2.Models;
 
 namespace Arthur_Jayson_Ilan_UA2
 {
@@ -19,8 +20,10 @@ namespace Arthur_Jayson_Ilan_UA2
     /// </summary>
     public partial class HomePage : Window
     {
-        public HomePage()
+        private readonly UserRole _userRole;
+        public HomePage(UserRole userRole)
         {
+            _userRole = userRole;
             InitializeComponent();
         }
     }

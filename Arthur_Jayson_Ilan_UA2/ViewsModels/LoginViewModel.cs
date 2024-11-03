@@ -57,6 +57,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             {
                 if (_password != value)
                 {
+                    _password.Dispose(); // Libérer les ressources de l'ancien SecureString
                     _password = value;
                     OnPropertyChanged(nameof(Password));
                     PasswordError = string.Empty;
@@ -94,7 +95,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                         try
                         {
                             _isUpdatingPassword = true;
-                            UpdateSecurePassword(value, ref _password);
+                            UpdateSecurePassword(value);
                         }
                         finally
                         {
@@ -216,6 +217,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     }
                     // Naviguer vers la vue appropriée
                     // TODO: Implémenter la navigation
+                    
                 }
                 else
                 {
@@ -262,18 +264,22 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         }
 
         // Méthode pour mettre à jour le SecureString à partir d'un string
-        private static void UpdateSecurePassword(string unsecurePassword, ref SecureString securePassword)
+        private void UpdateSecurePassword(string unsecurePassword, bool isConfirm = false)
         {
-            // Effacer le SecureString existant
-            securePassword.Clear();
+            var newSecurePassword = new SecureString();
 
             if (!string.IsNullOrEmpty(unsecurePassword))
             {
                 foreach (char c in unsecurePassword)
                 {
-                    securePassword.AppendChar(c);
+                    newSecurePassword.AppendChar(c);
                 }
-                securePassword.MakeReadOnly();
+            }
+            newSecurePassword.MakeReadOnly();
+
+            if (!isConfirm)
+            {
+                Password = newSecurePassword;
             }
         }
 

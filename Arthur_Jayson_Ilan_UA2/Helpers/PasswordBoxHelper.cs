@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -117,12 +118,12 @@ namespace Arthur_Jayson_Ilan_UA2.Helpers
             IntPtr unmanagedString = IntPtr.Zero;
             try
             {
-                unmanagedString = System.Runtime.InteropServices.Marshal.SecureStringToGlobalAllocUnicode(secureString);
-                return System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedString) ?? string.Empty;
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);
+                return Marshal.PtrToStringUni(unmanagedString) ?? string.Empty;
             }
             finally
             {
-                System.Runtime.InteropServices.Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
     }
