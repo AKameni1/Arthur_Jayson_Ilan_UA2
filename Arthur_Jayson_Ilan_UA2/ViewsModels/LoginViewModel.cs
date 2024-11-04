@@ -207,14 +207,14 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                 if (user != null)
                 {
                     // Connexion réussie
-                    if (user.IsSuperAdmin)
-                    {
-                        MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                    //if (user.IsSuperAdmin)
+                    //{
+                    //    MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //}
                     // Naviguer vers la vue appropriée
                     // TODO: Implémenter la navigation
 

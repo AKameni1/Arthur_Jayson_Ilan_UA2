@@ -4,9 +4,183 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2"
+        xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="HomePage" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Library Management"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Height="720" Width="1080" WindowStartupLocation="CenterScreen">
+
+
+    <Border Background="#EFF2F7" CornerRadius="30">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding IsMenuExpanded, Converter={StaticResource BooleanToWidthConverter}}"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Menu -->
+            <Grid x:Name="LeftMenu">
+                <!--<Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMenuExpanded}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ExpandMenuStoryboard}"/>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsMenuExpanded}" Value="False">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource CollapseMenuStoryboard}"/>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>-->
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <!--<RowDefinition Height="Auto"/>-->
+                </Grid.RowDefinitions>
+
+                <!-- Menu Icon (Toggle) -->
+                <Button Margin="20,20,0,35" Style="{StaticResource TopButton}" Command="{Binding ToggleMenuCommand}">
+                    <Icon:PackIconMaterial Kind="Menu" Width="20" Height="20"/>
+                </Button>
+
+                <!-- Menu Content -->
+                <Border Grid.Row="1" Background="#623ED0" CornerRadius="0,50,0,30" Padding="0,0,2,0">
+                    <DockPanel>
+                        <!-- Menu Logo et Infos Utilisateur -->
+                        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Visibility="{Binding IsMenuExpanded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Button Command="{Binding ProfileCommand}"  
+                                    Style="{StaticResource ProfileImageButton}">
+                                <Border Width="80" Height="80" Padding="3" Background="White" CornerRadius="40">
+                                    <Ellipse>
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{Binding ProfileImagePath}"/>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                </Border>
+                            </Button>
+
+                            <TextBlock Text="{Binding CurrentUser.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding CurrentUser.Role}" Foreground="#D0BFFF" FontSize="14" FontWeight="SemiBold" TextAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Menu Separator -->
+                        <Separator Margin="25,20,25,20" Height="0.8" Background="#7E5FDC" DockPanel.Dock="Top" Visibility="{Binding IsMenuExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- Menu Buttons -->
+                        <ItemsControl ItemsSource="{Binding Tabs}" Margin="0,10,0,0" DockPanel.Dock="Top">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource MenuButton}" Cursor="Hand"
+                                            Command="{Binding DataContext.SwitchTabCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"
+                                            Background="{Binding IsSelected, Converter={StaticResource BoolToBackgroundConverter}}"
+                                            Foreground="{Binding IsSelected, Converter={StaticResource BoolToForegroundConverter}}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Icon:PackIconMaterial Kind="{Binding IconKind}" Style="{StaticResource MenuButtonIcon}"/>
+                                            <TextBlock Text="{Binding Header}" Margin="10,0,0,0" TextWrapping="Wrap" Width="100"
+                                                       Visibility="{Binding DataContext.IsMenuExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Logout Button -->
+                        <Button Style="{StaticResource MenuButton}" DockPanel.Dock="Bottom" Margin="15,0,15,20" VerticalAlignment="Bottom" Command="{Binding LogoutCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Icon:PackIconMaterial  Kind="Logout" Style="{StaticResource MenuButtonIcon}" Foreground="PaleVioletRed"/>
+                                <TextBlock Text="Déconnexion" Margin="10,0,0,0" Foreground="PaleVioletRed"
+                                           Visibility="{Binding IsMenuExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </Button>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- Main Section -->
+            <Grid Grid.Column="1" Margin="30,20,20,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid MouseDown="Border_MouseDown">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Title App-->
+                    <TextBlock Text="Gestion de Bibliothèque" HorizontalAlignment="Left" Style="{StaticResource TitleApp}"/>
+
+                    <!-- Top Buttons (Minimize and Close) -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource TopButton}" Command="{Binding MinimizeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Cursor="Arrow">
+                            <Icon:PackIconMaterial Kind="WindowMinimize" Width="15" Height="15"/>
+                        </Button>
+                        <Button Style="{StaticResource TopButton}" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Cursor="Arrow">
+                            <Icon:PackIconMaterial Kind="WindowClose" Width="15" Height="15"/>
+                        </Button>
+                    </StackPanel>
+
+                </Grid>
+
+                <!--Search Textbox-->
+                <Grid Width="300" HorizontalAlignment="Left" Grid.Row="1">
+                    <TextBlock Margin="20,0" VerticalAlignment="Center" Foreground="#B0B9C6" IsHitTestVisible="False"
+                               Panel.ZIndex="1" Text="Rechercher ici ..."
+                               Visibility="{Binding ElementName=TextSearch, Path=Text.IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <TextBox x:Name="TextSearch" Style="{StaticResource TextBoxSearch}"/>
+
+                    <Icon:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center"
+                                           Margin="0,0,15,0" Foreground="#B0B9C6" HorizontalAlignment="Right"/>
+                </Grid>
+
+                <!--Top Buttons-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1" Margin="0">
+                    <Button Style="{StaticResource TopButton}" Command="{Binding CogCommand}" Margin="0,0,10,0"> <!-- Background="#DCDCDC" -->
+                        <Icon:PackIconMaterial Kind="Cog" />
+                    </Button>
+                    <Button Style="{StaticResource TopButton}" Command="{Binding BellCommand}" Margin="0,0,10,0">
+                        <Icon:PackIconMaterial Kind="Bell" />
+                    </Button>
+                </StackPanel>
+
+                <!-- Page Title -->
+                <TextBlock Text="{Binding SelectedTabHeader}" Grid.Row="2" FontSize="32" FontWeight="SemiBold" Margin="0,20,0,0"
+                           HorizontalAlignment="Left" Foreground="#121518"/>
+
+                <!-- Add Button -->
+                <Button Style="{StaticResource AddButton}" Grid.Row="2" HorizontalAlignment="Right" Command="{Binding AddNewMemberCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="11" Height="11" Margin="0,1,8,0"/>
+                        <TextBlock Text="Ajouter un membre" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Separator -->
+                <Separator Grid.Row="3" Height="2" Background="#DAE2EA" Margin="0,-1,0,10"/>
+
+                <!-- Content Area -->
+                <ContentControl x:Name="MainContentControl" Grid.Row="4" Content="{Binding SelectedTabContent}">
+                    <ContentControl.RenderTransform>
+                        <TranslateTransform X="0" Y="0"/>
+                    </ContentControl.RenderTransform>
+                </ContentControl>
+
+            </Grid>
+        </Grid>
+    </Border>
+
+
 </Window>

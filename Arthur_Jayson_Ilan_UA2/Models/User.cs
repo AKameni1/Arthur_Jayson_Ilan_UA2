@@ -120,6 +120,9 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             IsSuperAdmin = isSuperAdmin;
         }
 
+        // Constructeur sans paramètres
+        public User() { }
+
         // Méthodes
 
         /// <summary>

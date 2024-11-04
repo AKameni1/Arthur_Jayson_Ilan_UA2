@@ -17,16 +17,12 @@ namespace Arthur_Jayson_Ilan_UA2
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window, INavigableWindow
-    {
-        //private readonly INavigationService _navigationService;
-
+    {        
         private BitmapImage? _backgroundImage;
         public MainWindow()
         {
             InitializeComponent();
             PreloadBackgroundImage();
-
-            //_navigationService = new Services.NavigationService(this);
 
             MainContentControl.Content = new LoginView();
 

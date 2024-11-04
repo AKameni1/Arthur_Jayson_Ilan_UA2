@@ -8,5 +8,8 @@
     <converters:BoolToIconKindConverter x:Key="BoolToIconKindConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <converters:BoolToBackgroundConverter x:Key="BoolToBackgroundConverter"/>
+    <converters:BoolToForegroundConverter x:Key="BoolToForegroundConverter"/>
+    <converters:BooleanToWidthConverter x:Key="BooleanToWidthConverter"/>
 
 </ResourceDictionary>

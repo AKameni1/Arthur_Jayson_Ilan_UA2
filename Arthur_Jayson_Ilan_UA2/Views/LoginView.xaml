@@ -72,15 +72,17 @@
                                  Visibility="{Binding IsPasswordVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- ToggleButton pour basculer la visibilité -->
-                        <ToggleButton x:Name="TogglePasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand" Grid.Column="2"
-                                      IsChecked="{Binding IsPasswordVisible}">
-                            <ToggleButton.Template>
-                                <ControlTemplate TargetType="ToggleButton">
-                                    <Icon:PackIconMaterial Style="{StaticResource IconStyle}"
-                                                           Kind="{Binding IsPasswordVisible, Converter={StaticResource BoolToIconKindConverter}}"/>
-                                </ControlTemplate>
-                            </ToggleButton.Template>
-                        </ToggleButton>
+                        <Button Style="{StaticResource IconButton}" Grid.Column="2">
+                            <ToggleButton x:Name="TogglePasswordVisibility" HorizontalAlignment="Left"  Cursor="Hand"
+                                          IsChecked="{Binding IsPasswordVisible}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Icon:PackIconMaterial Style="{StaticResource IconStyle}"
+                                                                   Kind="{Binding IsPasswordVisible, Converter={StaticResource BoolToIconKindConverter}}"/>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                        </Button>
 
                     </Grid>
                 </Border>

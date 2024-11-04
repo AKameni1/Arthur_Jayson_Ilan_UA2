@@ -104,6 +104,22 @@
 
     </Style>
 
+    <Style x:Key="IconButton" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="LabelTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="13"/>
         <!--<Setter Property="Foreground" Value="White"/>-->
@@ -113,6 +129,7 @@
     </Style>
 
     <Style x:Key="ButtonStyle" TargetType="Button">
+        <Setter Property="IsDefault" Value="True"/>
         <Setter Property="Width" Value="159"/>
         <Setter Property="Height" Value="37"/>
         <Setter Property="Padding" Value="0"/>
@@ -251,6 +268,7 @@
         <Setter Property="Foreground" Value="#6E7783" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Width" Value="30"/>
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Height" Value="30"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Template">
@@ -275,8 +293,10 @@
         <Setter Property="Foreground" Value="#D0C0FF" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Height" Value="35"/>
-        <Setter Property="Width" Value="170"/>
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Width" Value="Auto"/>
         <Setter Property="Margin" Value="15,3"/>
+        <Setter Property="Padding" Value="5,0"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Template">
@@ -295,6 +315,22 @@
                 <Setter Property="Foreground" Value="#FFFFFF" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ProfileImageButton" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="MenuButtonIcon" TargetType="Icon:PackIconMaterial">
@@ -504,6 +540,15 @@ BorderThickness="1" BorderBrush="#E0E6ED">
                 <Setter Property="Background" Value="#FFCCCCCC"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="TitleApp" TargetType="TextBlock">
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#333"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontStyle" Value="Normal"/>
     </Style>
 
     <!--Region DataGrid Style-->

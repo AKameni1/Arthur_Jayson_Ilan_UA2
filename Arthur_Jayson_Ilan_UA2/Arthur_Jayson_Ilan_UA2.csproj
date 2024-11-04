@@ -16,8 +16,12 @@
     <None Remove="Assets\Fonts\Roboto\Roboto-Medium.ttf" />
     <None Remove="Assets\Fonts\Roboto\Roboto-Regular.ttf" />
     <None Remove="Assets\Fonts\Roboto\Roboto-Thin.ttf" />
+    <None Remove="Assets\Images\adminAccount.png" />
+    <None Remove="Assets\Images\clientAccount.png" />
     <None Remove="Assets\Images\default.png" />
     <None Remove="Assets\Images\img_background.jpg" />
+    <None Remove="Assets\Images\librarianAccount.png" />
+    <None Remove="Assets\Images\superAdminAccount.png" />
     <None Remove="favicon_io\favicon.ico" />
   </ItemGroup>
 
@@ -37,8 +41,12 @@
     <Resource Include="Assets\Fonts\Roboto\Roboto-Medium.ttf" />
     <Resource Include="Assets\Fonts\Roboto\Roboto-Regular.ttf" />
     <Resource Include="Assets\Fonts\Roboto\Roboto-Thin.ttf" />
+    <Resource Include="Assets\Images\adminAccount.png" />
+    <Resource Include="Assets\Images\clientAccount.png" />
     <Resource Include="Assets\Images\default.png" />
     <Resource Include="Assets\Images\img_background.jpg" />
+    <Resource Include="Assets\Images\librarianAccount.png" />
+    <Resource Include="Assets\Images\superAdminAccount.png" />
   </ItemGroup>
 
 </Project>
