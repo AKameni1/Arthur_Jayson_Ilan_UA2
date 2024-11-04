@@ -27,14 +27,8 @@ namespace Arthur_Jayson_Ilan_UA2.Views
         {
             InitializeComponent();
 
-            // Récupérer une référence au MainWindow
-            var mainWindow = Application.Current.MainWindow as MainWindow ?? throw new InvalidOperationException("MainWindow is not available.");
-
-            // Instancier le service de navigation avec la référence au MainWindow
-            var navigationService = new Services.NavigationService(mainWindow);
-
             // Instancier le ViewModel avec le service de navigation
-            var viewModel = new EmailVerificationViewModel(navigationService);
+            var viewModel = new EmailVerificationViewModel();
             viewModel.SetResetType(resetType);
 
             // Définir le DataContext

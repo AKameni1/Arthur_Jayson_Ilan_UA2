@@ -226,12 +226,12 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         public ICommand ToggleConfirmPasswordVisibilityCommand { get; }
 
         // Services et dépendances
-        private readonly INavigationService _navigationService;
+        //private readonly INavigationService _navigationService;
         private readonly User _currentUser;
 
-        public ResetPasswordViewModel(INavigationService navigationService, User user)
+        public ResetPasswordViewModel(User user) // INavigationService navigationService,
         {
-            _navigationService = navigationService;            
+            //_navigationService = navigationService;            
             _currentUser = user;
 
             ConfirmCommand = new AsyncRelayCommand(ExecuteConfirmAsync);
@@ -264,7 +264,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     await Task.Delay(1000);
 
                     // Navigation vers la vue de connexion
-                    _navigationService.NavigateTo(new LoginView());
+                    NavigationService.Instance.NavigateTo(new LoginView());
                 }
                 catch (Exception ex)
                 {
@@ -277,7 +277,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         private void ExecuteReturn(object? parameter)
         {
             // Navigation vers la vue de connexion
-            _navigationService.NavigateTo(new LoginView());
+            NavigationService.Instance.NavigateTo(new LoginView());
         }
 
         private void ExecuteTogglePasswordVisibility(object? parameter)

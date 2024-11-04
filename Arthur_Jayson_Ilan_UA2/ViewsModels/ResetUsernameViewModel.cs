@@ -79,12 +79,12 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         public ICommand ReturnCommand { get; }
 
         // Services et dépendances
-        private readonly INavigationService _navigationService;
+        //private readonly INavigationService _navigationService;
         private readonly User _currentUser;
 
-        public ResetUsernameViewModel(INavigationService navigationService, User user)
+        public ResetUsernameViewModel(User user) // INavigationService navigationService, 
         {
-            _navigationService = navigationService;
+            //_navigationService = navigationService;
             _currentUser = user;
 
             ConfirmCommand = new AsyncRelayCommand(ExecuteConfirmAsync);
@@ -109,7 +109,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     await Task.Delay(500);
 
                     // Navigation vers la vue de connexion
-                    _navigationService.NavigateTo(new LoginView());
+                    NavigationService.Instance.NavigateTo(new LoginView());
                 }
                 catch (Exception ex)
                 {
@@ -122,7 +122,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         private void ExecuteReturn(object? parameter)
         {
             // Navigation vers la vue de connexion
-            _navigationService.NavigateTo(new LoginView());
+            NavigationService.Instance.NavigateTo(new LoginView());
         }
 
         // Méthode de validation du nom d'utilisateur

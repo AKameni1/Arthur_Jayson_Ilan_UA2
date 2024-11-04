@@ -18,7 +18,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 {
     public class EmailVerificationViewModel : INotifyPropertyChanged
     {
-        private readonly INavigationService _navigationService;
+        //private readonly INavigationService _navigationService;
 
         // Flag pour éviter les boucles infinies
         private bool _isUpdatingSuperAdminPassword = false;
@@ -236,9 +236,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         // Propriété pour stocker le type de reset (password ou username)
         private string _resetType = "password"; // Par défaut
 
-        public EmailVerificationViewModel(INavigationService navigationService)
+        public EmailVerificationViewModel() // INavigationService navigationService
         {
-            _navigationService = navigationService;
+            //_navigationService = navigationService;
 
             // Initialisation des commandes
             VerifyEmailCommand = new AsyncRelayCommand(ExecuteVerifyEmailAsync);
@@ -311,7 +311,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         // Méthode pour revenir à la vue précédente
         private void ExecuteReturn(object? parameter)
         {
-            _navigationService.NavigateTo(new LoginView());
+            NavigationService.Instance.NavigateTo(new LoginView());
         }
 
         // Méthode pour valider l'email
@@ -366,11 +366,11 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             // Naviguer vers la vue de reset appropriée
             if (_resetType == "password")
             {
-                _navigationService.NavigateTo(new ResetPasswordView(user));
+                NavigationService.Instance.NavigateTo(new ResetPasswordView(user));
             }
             else if (_resetType == "username")
             {
-                _navigationService.NavigateTo(new ResetUsernameView(user));
+                NavigationService.Instance.NavigateTo(new ResetUsernameView(user));
             }
         }
 

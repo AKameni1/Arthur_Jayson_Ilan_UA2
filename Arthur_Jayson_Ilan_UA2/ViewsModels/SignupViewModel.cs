@@ -17,7 +17,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 {
     public class SignupViewModel : INotifyPropertyChanged
     {
-        private readonly INavigationService _navigationService;
+        //private readonly INavigationService _navigationService;
 
         // Flags pour éviter les boucles infinies
         private bool _isUpdatingPassword = false;
@@ -283,10 +283,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         public ICommand TogglePasswordVisibilityCommand { get; }
         public ICommand ToggleConfirmPasswordVisibilityCommand { get; }
 
-        public SignupViewModel(INavigationService navigationService)
+        public SignupViewModel() // INavigationService navigationService
         {
 
-            _navigationService = navigationService;
+            //_navigationService = navigationService;
 
             RegisterCommand = new RelayCommand(ExecuteRegister);
             AlreadyHaveAccountCommand = new RelayCommand(ExecuteAlreadyHaveAccount);
@@ -395,7 +395,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 
         private void NavigateToLoginView()
         {
-            _navigationService.NavigateTo(new LoginView());
+            NavigationService.Instance.NavigateTo(new LoginView());
         }
 
         private static bool IsValidEmail(string email)

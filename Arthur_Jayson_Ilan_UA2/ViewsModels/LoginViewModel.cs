@@ -18,14 +18,14 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
-        private readonly INavigationService _navigationService;
+        //private readonly INavigationService _navigationService;
 
         // Flag pour éviter les boucles infinies
         private bool _isUpdatingPassword = false;
 
-        public LoginViewModel(INavigationService navigationService)
+        public LoginViewModel() // INavigationService navigationService
         {
-            _navigationService = navigationService;
+            //_navigationService = navigationService;
 
             ConnectCommand = new RelayCommand(ExecuteConnect);
             TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
@@ -217,7 +217,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     }
                     // Naviguer vers la vue appropriée
                     // TODO: Implémenter la navigation
-                    
+
+                    // Connexion réussie, naviguer vers HomePage avec l'objet user
+                    NavigationService.Instance.OpenWindow<HomePage>(user);
+
                 }
                 else
                 {
@@ -233,7 +236,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 
         private void ExecuteNotHaveAccount(object? parameter)
         {
-            _navigationService.NavigateTo(new SignupView());
+            //_navigationService.NavigateTo(new SignupView());
+            NavigationService.Instance.NavigateTo(new SignupView());
         }
 
         private void ExecuteResetData(object? parameter)
@@ -241,7 +245,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             if (parameter is string resetType)
             {
                 // Implémenter la navigation vers la vue de récupération des identifiants
-                _navigationService.NavigateTo(new EmailVerificationView(resetType));
+                NavigationService.Instance.NavigateTo(new EmailVerificationView(resetType));
             }
         }
 

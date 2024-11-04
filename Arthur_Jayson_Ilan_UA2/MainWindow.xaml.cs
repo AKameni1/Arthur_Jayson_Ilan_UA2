@@ -16,7 +16,7 @@ namespace Arthur_Jayson_Ilan_UA2
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INavigableWindow
     {
         //private readonly INavigationService _navigationService;
 
@@ -29,6 +29,9 @@ namespace Arthur_Jayson_Ilan_UA2
             //_navigationService = new Services.NavigationService(this);
 
             MainContentControl.Content = new LoginView();
+
+            // Définir cette fenêtre comme fenêtre active dans NavigationService
+            Services.NavigationService.Instance.SetCurrentWindow(this);
         }
 
         private void PreloadBackgroundImage()
@@ -69,6 +72,11 @@ namespace Arthur_Jayson_Ilan_UA2
         public void LoadNewUserControl(UserControl view)
         {
             MainContentControl.Content = view;
+        }
+
+        public void OnNavigatedTo(object parameter)
+        {
+            //throw new NotImplementedException();
         }
     }
 }
