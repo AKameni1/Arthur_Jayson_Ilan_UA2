@@ -49,11 +49,4 @@
     <Resource Include="Assets\Images\superAdminAccount.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewsModels\HomePageViewModels\" />
-    <Folder Include="ViewsModels\LoginPageViewModels\" />
-    <Folder Include="Views\HomePageViews\" />
-    <Folder Include="Views\LoginPageViews\" />
-  </ItemGroup>
-
 </Project>

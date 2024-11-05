@@ -13,8 +13,9 @@ using System.Windows.Input;
 using Arthur_Jayson_Ilan_UA2.Commands;
 using Arthur_Jayson_Ilan_UA2.Views;
 using System.Windows;
+using Arthur_Jayson_Ilan_UA2.Views.HomePageViews.ReservationsViews;
 
-namespace Arthur_Jayson_Ilan_UA2.ViewsModels
+namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
     public class HomePageViewModel : INotifyPropertyChanged, INavigable
     {
@@ -41,7 +42,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         public UserControl SelectedTabContent
         {
             get => _selectedTabContent;
-            set { _selectedTabContent = value; OnPropertyChanged(); }
+            // Mettre à jour le bouton "Ajouter" à chaque changement d'onglet
+            set { _selectedTabContent = value; OnPropertyChanged(); UpdateAddButton(); }
         }
 
         public bool IsMenuExpanded
@@ -56,8 +58,34 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             set { _currentUser = value; OnPropertyChanged(); }
         }
 
-        public ICommand LogoutCommand { get; }
+        // Propriétés pour le bouton "Ajouter"
+        private Visibility _addButtonVisibility = Visibility.Collapsed;
+        public Visibility AddButtonVisibility
+        {
+            get => _addButtonVisibility;
+            set { _addButtonVisibility = value; OnPropertyChanged(); }
+        }
+
+        private string _addButtonText = string.Empty;
+        public string AddButtonText
+        {
+            get => _addButtonText;
+            set { _addButtonText = value; OnPropertyChanged(); }
+        }
+
+        private ICommand? _addButtonCommand = null;
+        public ICommand? AddButtonCommand
+        {
+            get => _addButtonCommand;
+            set { _addButtonCommand = value; OnPropertyChanged(); }
+        }
+
+        // Commandes spécifiques pour chaque action "Ajouter"
         public ICommand AddNewMemberCommand { get; }
+        public ICommand AddNewBookCommand { get; }
+        public ICommand AddNewReservationCommand { get; }
+
+        public ICommand LogoutCommand { get; }
         public ICommand ToggleMenuCommand { get; }
         public ICommand CogCommand { get; }
         public ICommand BellCommand { get; }
@@ -78,6 +106,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             MinimizeCommand = new RelayCommand<Window>(ExecuteMinimize);
             CloseCommand = new RelayCommand<Window>(ExecuteClose);
             ProfileCommand = new RelayCommand(ExecuteProfile);
+
+            AddNewBookCommand = new RelayCommand(AddNewBook);
+            AddNewReservationCommand = new RelayCommand(AddNewReservation, CanAddNewReservation);
         }
 
         private void ExecuteMinimize(Window? window)
@@ -183,7 +214,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     Tabs.Add(new TabItemModel
                     {
                         Header = "Gestion des Utilisateurs",
-                        IconKind = "AccountMultiple"                        
+                        IconKind = "AccountMultiple"
                     });
                     Tabs.Add(new TabItemModel
                     {
@@ -269,56 +300,28 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             SelectedTabHeader = tab.Header;
 
             // Lazy Loading : Charger le UserControl seulement lorsqu'il est sélectionné
-            //SelectedTabContent = tab.Header.ToLower() switch
-            //{
-            //    "dashboard" => NavigationService.Instance.NavigateTo(new DashboardView()),
-            //    "profil" => new ProfileView(),// À implémenter
-            //    "gestion des utilisateurs" => new UserManagementView(),// À implémenter
-            //    "gestion des livres" => new BookManagementView(),// À implémenter
-            //    "prêts et retours" => new LoanReturnView(),// À implémenter
-            //    "réservations" => new ReservationsView(),// À implémenter
-            //    "rapports" => new ReportsView(),// À implémenter
-            //    "support" => new SupportView(),// À implémenter
-            //    "messages" => new MessagesView(),// À implémenter
-            //    _ => new DashboardView(),
-            //};
-
-            switch (tab.Header.ToLower())
-            {
-                case "dashboard":
-                    NavigationService.Instance.NavigateTo(new DashboardView());
-                    break;
-                case "profil":
-                    NavigationService.Instance.NavigateTo(new ProfileView());
-                    break;
-                case "gestion des utilisateurs":
-                    NavigationService.Instance.NavigateTo(new UserManagementView());
-                    break;
-                case "gestion des livres":
-                    NavigationService.Instance.NavigateTo(new BookManagementView());
-                    break;
-                case "prêts et retours":
-                    NavigationService.Instance.NavigateTo(new LoanReturnView());
-                    break;
-                case "réservations":
-                    NavigationService.Instance.NavigateTo(new ReservationsView());
-                    break;
-                case "rapports":
-                    NavigationService.Instance.NavigateTo(new ReportsView());
-                    break;
-                case "support":
-                    NavigationService.Instance.NavigateTo(new SupportView());
-                    break;
-                case "messages":
-                    NavigationService.Instance.NavigateTo(new MessagesView());
-                    break;
-                default:
-                    NavigationService.Instance.NavigateTo(new DashboardView());
-                    break;
-            }
+            SelectedTabContent = GetView(tab.Header);
+            NavigationService.Instance.NavigateTo(SelectedTabContent);
         }
 
-        private void ExecuteLogout(object? parameter)
+        private UserControl GetView(string header)
+        {
+            return header.ToLower() switch
+            {
+                "dashboard" => new DashboardView(),
+                "profil" => new ProfileView(),// À implémenter
+                "gestion des utilisateurs" => new UserManagementView(),// À implémenter
+                "gestion des livres" => new BookManagementView(),// À implémenter
+                "prêts et retours" => new LoanReturnView(),// À implémenter
+                "réservations" => new ReservationsView(),// À implémenter
+                "rapports" => new ReportsView(),// À implémenter
+                "support" => new SupportView(),// À implémenter
+                "messages" => new MessagesView(),// À implémenter
+                _ => new DashboardView(),
+            };
+        }
+
+            private void ExecuteLogout(object? parameter)
         {
             // Logique de déconnexion si nécessaire
             // Naviguer vers la fenêtre de connexion
@@ -329,7 +332,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
         {
             // Même si le bouton ne sert pas à ajouter des membres, il peut naviguer vers une autre vue
             // Exemple : Naviguer vers une vue d'ajout d'entité
-            NavigationService.Instance.NavigateTo(new AddEntityView()); // À implémenter
+            //NavigationService.Instance.NavigateTo(new AddEntityView()); // À implémenter
+            //var addEntityView = new AddEntityView();
+            //addEntityView.ShowDialog();
         }
 
         private void ExecuteToggleMenu(object? parameter)
@@ -365,6 +370,56 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
 
             // Naviguer vers les messages ou notifications via un UserControl
             NavigationService.Instance.NavigateTo(new NotificationsView()); // À implémenter
+        }
+
+        private void AddNewReservation(object? parameter)
+        {
+            //////////////////////////////
+            /////// Logique pour faire une réservation
+            //var addBookView = new AddBookView(); // Assurez-vous d'avoir cette vue
+            //addBookView.ShowDialog();
+        }
+
+        private void AddNewBook(object? parameter)
+        {
+            //////////////////////////////
+            ///// Logique pour faire une réservation
+            //var makeReservationView = new MakeReservation(); // Assurez-vous d'avoir cette vue
+            //makeReservationView.ShowDialog();
+        }
+
+        private bool CanAddNewReservation(object? parameter)
+        {
+            // Logique pour faire être en mesure de faire une réservation
+            return true;
+        }
+
+        // Méthode pour mettre à jour le bouton "Ajouter" en fonction de l'onglet sélectionné
+        private void UpdateAddButton()
+        {
+            if (SelectedTabContent is UserManagementView)
+            {
+                AddButtonVisibility = Visibility.Visible;
+                AddButtonText = "Ajouter un membre";
+                AddButtonCommand = AddNewMemberCommand;
+            }
+            else if (SelectedTabContent is BookManagementView)
+            {
+                AddButtonVisibility = Visibility.Visible;
+                AddButtonText = "Ajouter un livre";
+                AddButtonCommand = AddNewBookCommand;
+            }
+            else if (SelectedTabContent is ReservationsView)
+            {
+                AddButtonVisibility = Visibility.Visible;
+                AddButtonText = "Faire une réservation";
+                AddButtonCommand = AddNewReservationCommand;
+            }
+            else
+            {
+                // Onglets qui n'ont pas besoin du bouton "Ajouter"
+                AddButtonVisibility = Visibility.Collapsed;
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

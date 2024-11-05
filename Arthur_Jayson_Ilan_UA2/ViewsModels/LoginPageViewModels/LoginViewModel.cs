@@ -14,7 +14,7 @@ using Arthur_Jayson_Ilan_UA2.Models;
 using Arthur_Jayson_Ilan_UA2.Services;
 using Arthur_Jayson_Ilan_UA2.Views;
 
-namespace Arthur_Jayson_Ilan_UA2.ViewsModels
+namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
@@ -115,7 +115,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                 if (_isPasswordVisible != value)
                 {
                     _isPasswordVisible = value;
-                    OnPropertyChanged( nameof(IsPasswordVisible));
+                    OnPropertyChanged(nameof(IsPasswordVisible));
                 }
             }
         }
@@ -190,7 +190,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             if (string.IsNullOrWhiteSpace(password))
             {
                 PasswordError = "Veuillez entrer un mot de passe.";
-                hasError= true;
+                hasError = true;
             }
             else
             {
@@ -255,7 +255,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             if (secureString == null)
                 return string.Empty;
 
-            IntPtr unmanagedString = IntPtr.Zero;
+            nint unmanagedString = nint.Zero;
             try
             {
                 unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);

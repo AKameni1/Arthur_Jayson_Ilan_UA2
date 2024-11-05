@@ -1,15 +1,15 @@
-﻿<UserControl x:Class="Arthur_Jayson_Ilan_UA2.Views.BookManagementView"
+﻿<UserControl x:Class="Arthur_Jayson_Ilan_UA2.Views.ReservationsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views"
-             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels"
+             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels"
              xmlns:sm="clr-namespace:Arthur_Jayson_Ilan_UA2.Models.SubMenu"
              mc:Ignorable="d" >
 
     <UserControl.DataContext>
-        <vm:BookManagementViewModel />
+        <vm:ReservationsViewModel />
     </UserControl.DataContext>
 
     <Grid>
@@ -21,14 +21,14 @@
 
         <!--Tab Buttons-->
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-            <Button Content="Catalogue" Width="Auto" Margin="0,0,3,0"
-                Command="{Binding ShowCatalogCommand}">
+            <Button Content="Faire une réservation" Width="Auto" Margin="0,0,3,0"
+            Command="{Binding ShowMakeReservationCommand}">
 
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
                         <Setter Property="BorderBrush" Value="Transparent"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding SelectedSubMenu}" Value="{x:Static sm:BookManagementSubMenu.Catalog}">
+                            <DataTrigger Binding="{Binding SelectedSubMenu}" Value="{x:Static sm:ReservationsSubMenu.MakeReservation}">
                                 <Setter Property="BorderBrush" Value="#784FF2"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -36,13 +36,13 @@
                 </Button.Style>
 
             </Button>
-            <Button Content="Catégorisation" Margin="3,0,0,0" Width="Auto"
-                Command="{Binding ShowCategorizationCommand}">
+            <Button Content="Historique des réservations" Margin="3,0,0,0" Width="Auto"
+            Command="{Binding ShowReservationHistoryCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
                         <Setter Property="BorderBrush" Value="Transparent"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding SelectedSubMenu}" Value="{x:Static sm:BookManagementSubMenu.Categorization}">
+                            <DataTrigger Binding="{Binding SelectedSubMenu}" Value="{x:Static sm:ReservationsSubMenu.ReservationHistory}">
                                 <Setter Property="BorderBrush" Value="#784FF2"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -51,8 +51,10 @@
             </Button>
         </StackPanel>
 
-        <ContentControl x:Name="BookManagementContent" Grid.Row="1" 
-                    Content="{Binding CurrentView}"/>
+        <ContentControl x:Name="ReservationContent" Grid.Row="1" 
+                Content="{Binding CurrentView}"/>
 
     </Grid>
+
+
 </UserControl>

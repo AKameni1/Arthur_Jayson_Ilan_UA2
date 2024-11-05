@@ -155,7 +155,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public User? Authenticate(string username, string password)
         {
-            User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.Ordinal));
 
             if (user != null && user.VerifyPassword(password))
             {
@@ -178,7 +178,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public bool EmailExists(string email)
         {
-            return _users.Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            return _users.Any(u => u.Email.Equals(email, StringComparison.Ordinal));
         }
 
         /// <summary>

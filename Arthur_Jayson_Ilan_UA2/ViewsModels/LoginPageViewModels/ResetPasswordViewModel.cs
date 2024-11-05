@@ -5,55 +5,23 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Arthur_Jayson_Ilan_UA2.Commands;
+using Arthur_Jayson_Ilan_UA2.Models;
 using Arthur_Jayson_Ilan_UA2.Services;
 using Arthur_Jayson_Ilan_UA2.Views;
 
-namespace Arthur_Jayson_Ilan_UA2.ViewsModels
+namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
-    public class SignupViewModel : INotifyPropertyChanged
+    public class ResetPasswordViewModel : INotifyPropertyChanged
     {
-        //private readonly INavigationService _navigationService;
 
         // Flags pour éviter les boucles infinies
         private bool _isUpdatingPassword = false;
         private bool _isUpdatingConfirmPassword = false;
 
-        // Propriétés pour les champs de saisie
-        private string _username = string.Empty;
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                if (_username != value)
-                {
-                    _username = value;
-                    OnPropertyChanged(nameof(Username));
-                    UsernameError = string.Empty;
-                }
-            }
-        }
-
-        private string _email = string.Empty;
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                if (_email != value)
-                {
-                    _email = value;
-                    OnPropertyChanged(nameof(Email));
-                    EmailError = string.Empty;
-                }
-            }
-        }
-
+        // Propriétés liées aux champs de mot de passe
         private SecureString _password = new SecureString();
         public SecureString Password
         {
@@ -98,12 +66,12 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
                     {
                         try
                         {
-                            _isUpdatingConfirmPassword = true;
+                            _isUpdatingConfirmPassword = false;
                             ConfirmPasswordUnsecure = ConvertToUnsecureString(_confirmPassword);
                         }
                         finally
                         {
-                            _isUpdatingConfirmPassword = false;
+                            _isUpdatingConfirmPassword = true;
                         }
                     }
                 }
@@ -165,7 +133,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private bool _isPasswordVisible;
+        // Propriétés pour la visibilité des mots de passe
+        private bool _isPasswordVisible = false;
         public bool IsPasswordVisible
         {
             get => _isPasswordVisible;
@@ -179,7 +148,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private bool _isConfirmPasswordVisible;
+        private bool _isConfirmPasswordVisible = false;
         public bool IsConfirmPasswordVisible
         {
             get => _isConfirmPasswordVisible;
@@ -193,34 +162,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private string _usernameError = string.Empty;
-        public string UsernameError
-        {
-            get => _usernameError;
-            set
-            {
-                if (_usernameError != value)
-                {
-                    _usernameError = value;
-                    OnPropertyChanged(nameof(UsernameError));
-                }
-            }
-        }
-
-        private string _emailError = string.Empty;
-        public string EmailError
-        {
-            get => _emailError;
-            set
-            {
-                if (_emailError != value)
-                {
-                    _emailError = value;
-                    OnPropertyChanged(nameof(EmailError));
-                }
-            }
-        }
-
+        // Propriétés pour les messages d'erreur et de succès
         private string _passwordError = string.Empty;
         public string PasswordError
         {
@@ -249,159 +191,140 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             }
         }
 
-        private string _signupErrorMessage = string.Empty;
-        public string SignupErrorMessage
+        private string _resetErrorMessage = string.Empty;
+        public string ResetErrorMessage
         {
-            get => _signupErrorMessage;
+            get => _resetErrorMessage;
             set
             {
-                if (_signupErrorMessage != value)
+                if (_resetErrorMessage != value)
                 {
-                    _signupErrorMessage = value;
-                    OnPropertyChanged(nameof(SignupErrorMessage));
+                    _resetErrorMessage = value;
+                    OnPropertyChanged(nameof(ResetErrorMessage));
                 }
             }
         }
 
-        private string _signupSuccessMessage = string.Empty;
-        public string SignupSuccessMessage
+        private string _resetSuccessMessage = string.Empty;
+        public string ResetSuccessMessage
         {
-            get => _signupSuccessMessage;
+            get => _resetSuccessMessage;
             set
             {
-                if (_signupSuccessMessage != value)
+                if (_resetSuccessMessage != value)
                 {
-                    _signupSuccessMessage = value;
-                    OnPropertyChanged(nameof(SignupSuccessMessage));
+                    _resetSuccessMessage = value;
+                    OnPropertyChanged(nameof(ResetSuccessMessage));
                 }
             }
         }
 
         // Commandes
-        public ICommand RegisterCommand { get; }
-        public ICommand AlreadyHaveAccountCommand { get; }
+        public ICommand ConfirmCommand { get; }
+        public ICommand ReturnCommand { get; }
         public ICommand TogglePasswordVisibilityCommand { get; }
         public ICommand ToggleConfirmPasswordVisibilityCommand { get; }
 
-        public SignupViewModel() // INavigationService navigationService
+        // Services et dépendances
+        //private readonly INavigationService _navigationService;
+        private readonly User _currentUser;
+
+        public ResetPasswordViewModel(User user) // INavigationService navigationService,
         {
+            //_navigationService = navigationService;            
+            _currentUser = user;
 
-            //_navigationService = navigationService;
-
-            RegisterCommand = new RelayCommand(ExecuteRegister);
-            AlreadyHaveAccountCommand = new RelayCommand(ExecuteAlreadyHaveAccount);
-            TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
-            ToggleConfirmPasswordVisibilityCommand = new RelayCommand(ToggleConfirmPasswordVisibility);
-            IsPasswordVisible = false;
-            IsConfirmPasswordVisible = false;
+            ConfirmCommand = new AsyncRelayCommand(ExecuteConfirmAsync);
+            ReturnCommand = new RelayCommand(ExecuteReturn);
+            TogglePasswordVisibilityCommand = new RelayCommand(ExecuteTogglePasswordVisibility);
+            ToggleConfirmPasswordVisibilityCommand = new RelayCommand(ExecuteToggleConfirmPasswordVisibility);
         }
 
-        private async void ExecuteRegister(object? parameter)
+        // Méthodes des commandes
+        private async Task ExecuteConfirmAsync(object? parameter)
         {
-            // Réinitialiser les messages
-            SignupErrorMessage = string.Empty;
-            SignupSuccessMessage = string.Empty;
+            ResetErrorMessage = string.Empty;
+            ResetSuccessMessage = string.Empty;
 
-            bool hasError = false;
+            if (ValidatePassword())
+            {
+                try
+                {
+                    // Conversion de SecureString en string de manière sécurisée
+                    string? password = ConvertToUnsecureString(Password);
+
+                    // Mise à jour du mot de passe via le UserService
+                    App.UserService.UpdatePassword(_currentUser, password);
+
+                    // Effacer la chaîne en mémoire
+                    password = null;
+
+                    // Affichage du message de succès
+                    ResetSuccessMessage = "Mot de passe mis à jour avec succès.";
+                    await Task.Delay(1000);
+
+                    // Navigation vers la vue de connexion
+                    NavigationService.Instance.NavigateTo(new LoginView());
+                }
+                catch (Exception ex)
+                {
+                    // Affichage du message d'erreur
+                    ResetErrorMessage = $"Une erreur inattendue s'est produite : {ex.Message}";
+                }
+            }
+        }
+
+        private void ExecuteReturn(object? parameter)
+        {
+            // Navigation vers la vue de connexion
+            NavigationService.Instance.NavigateTo(new LoginView());
+        }
+
+        private void ExecuteTogglePasswordVisibility(object? parameter)
+        {
+            IsPasswordVisible = !IsPasswordVisible;
+        }
+
+        private void ExecuteToggleConfirmPasswordVisibility(object? parameter)
+        {
+            IsConfirmPasswordVisible = !IsConfirmPasswordVisible;
+        }
+
+        // Méthode de validation des mots de passe
+        private bool ValidatePassword()
+        {
+            PasswordError = string.Empty;
+            ConfirmPasswordError = string.Empty;
+
+            bool isValid = true;
 
             string? password = ConvertToUnsecureString(Password);
             string? confirmPassword = ConvertToUnsecureString(ConfirmPassword);
 
-            // Validation des champs
-            if (string.IsNullOrWhiteSpace(Username))
+            if (password.Length < 12)
             {
-                UsernameError = "Veuillez entrer un nom d'utilisateur";
-                hasError = true;
+                PasswordError = "Le mot de passe doit contenir au moins 12 caractères.";
+                isValid = false;
             }
-
-            if (string.IsNullOrWhiteSpace(Email))
+            else if (!password.Any(char.IsUpper) || !password.Any(char.IsLower) || !password.Any(char.IsDigit))
             {
-                EmailError = "Veuillez entrer une adresse e-mail.";
-                hasError = true;
-            }
-            else if (!IsValidEmail(Email))
-            {
-                EmailError = "Veuillez entrer une adresse e-mail valide.";
-                hasError = true;
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                PasswordError = "Veuillez entrer un mot de passe.";
-                hasError = true;
-            }
-            else if (password.Length < 12)
-            {
-                PasswordError = "Le mot de passe doit comporter au moins 12 caractères.";
-                hasError = true;
-            }
-            else if (!(password.Any(char.IsUpper) && password.Any(char.IsLower) && password.Any(char.IsDigit)))
-            {
-                PasswordError = "Le mot de passe doit contenir au moins une majuscule, une minuscule, et un chiffre.";
-                hasError = true;
+                PasswordError = "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre.";
+                isValid = false;
             }
             else
             {
                 if (password != confirmPassword)
                 {
-                    ConfirmPasswordError = "Les mots de passe ne correspondent pas";
-                    hasError = true;
+                    ConfirmPasswordError = "Les mots de passe ne correspondent pas.";
+                    isValid = false;
                 }
             }
 
-            if (!hasError)
-            {
-                try
-                {
+            // Effacer les chaînes en mémoire
+            password = null;
+            confirmPassword = null;
 
-                    // Appeler le service d'inscription
-                    App.UserService.RegisterUser(Username, password, Email);
-
-                    // Effacer les chaînes en mémoire
-                    password = null;
-                    confirmPassword = null;
-
-                    // Attendre un court instant
-                    await Task.Delay(200);
-
-                    SignupSuccessMessage = "Inscription réussie !";
-
-                    // Attendre avant de naviguer
-                    await Task.Delay(1000);
-
-                    NavigateToLoginView();
-                }
-                catch (Exception ex)
-                {
-                    SignupErrorMessage = ex.Message;
-                }
-            }
-        }
-
-        private void ExecuteAlreadyHaveAccount(object? parameter)
-        {
-            NavigateToLoginView();
-        }
-
-        private void TogglePasswordVisibility(object? parameter)
-        {
-            IsPasswordVisible = !IsPasswordVisible;
-        }
-
-        private void ToggleConfirmPasswordVisibility(object? parameter)
-        {
-            IsConfirmPasswordVisible = !IsConfirmPasswordVisible;
-        }
-
-        private void NavigateToLoginView()
-        {
-            NavigationService.Instance.NavigateTo(new LoginView());
-        }
-
-        private static bool IsValidEmail(string email)
-        {
-            string emailPattern = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
-            return Regex.IsMatch(email, emailPattern);
+            return isValid;
         }
 
         // Méthode pour convertir SecureString en string de manière sécurisée
@@ -410,7 +333,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             if (secureString == null)
                 return string.Empty;
 
-            IntPtr unmanagedString = IntPtr.Zero;
+            nint unmanagedString = nint.Zero;
             try
             {
                 unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);

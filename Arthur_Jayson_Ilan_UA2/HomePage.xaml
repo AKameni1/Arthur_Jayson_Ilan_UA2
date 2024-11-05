@@ -161,10 +161,12 @@
                            HorizontalAlignment="Left" Foreground="#121518"/>
 
                 <!-- Add Button -->
-                <Button Style="{StaticResource AddButton}" Grid.Row="2" HorizontalAlignment="Right" Command="{Binding AddNewMemberCommand}">
+                <Button Style="{StaticResource AddButton}" Grid.Row="2" HorizontalAlignment="Right"
+                        Visibility="{Binding AddButtonVisibility}"
+                        Command="{Binding AddButtonCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="11" Height="11" Margin="0,1,8,0"/>
-                        <TextBlock Text="Ajouter un membre" />
+                        <TextBlock Text="{Binding AddButtonText}" />
                     </StackPanel>
                 </Button>
 

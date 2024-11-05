@@ -10,7 +10,7 @@ using Arthur_Jayson_Ilan_UA2.Services;
 using System.Windows.Input;
 using Arthur_Jayson_Ilan_UA2.Views;
 
-namespace Arthur_Jayson_Ilan_UA2.ViewsModels
+namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
     public class ResetUsernameViewModel : INotifyPropertyChanged
     {

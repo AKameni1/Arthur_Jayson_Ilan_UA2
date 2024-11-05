@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using Arthur_Jayson_Ilan_UA2.Models;
 using Arthur_Jayson_Ilan_UA2.Services;
 using Arthur_Jayson_Ilan_UA2.Views;
-using Arthur_Jayson_Ilan_UA2.ViewsModels;
+using Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels;
 
 namespace Arthur_Jayson_Ilan_UA2
 {

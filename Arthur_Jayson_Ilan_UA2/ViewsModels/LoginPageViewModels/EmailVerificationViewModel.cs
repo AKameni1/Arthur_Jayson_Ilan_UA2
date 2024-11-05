@@ -14,7 +14,7 @@ using Arthur_Jayson_Ilan_UA2.Views;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Arthur_Jayson_Ilan_UA2.ViewsModels
+namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
     public class EmailVerificationViewModel : INotifyPropertyChanged
     {
@@ -386,7 +386,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels
             if (secureString == null)
                 return string.Empty;
 
-            IntPtr unmanagedString = IntPtr.Zero;
+            nint unmanagedString = nint.Zero;
             try
             {
                 unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(secureString);

@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Arthur_Jayson_Ilan_UA2.Views.BookManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views"
+             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels"
+             xmlns:sm="clr-namespace:Arthur_Jayson_Ilan_UA2.Models.SubMenu"
+             mc:Ignorable="d" >
+
+    <UserControl.DataContext>
+        <vm:BookManagementViewModel />
+    </UserControl.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <!--Tab Buttons-->
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <Button Content="Catalogue" Width="Auto" Margin="0,0,3,0"
+                Command="{Binding ShowCatalogCommand}">
+
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedSubMenu}" Value="{x:Static sm:BookManagementSubMenu.Catalog}">
+                                <Setter Property="BorderBrush" Value="#784FF2"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+
+            </Button>
+            <Button Content="Catégorisation" Margin="3,0,0,0" Width="Auto"
+                Command="{Binding ShowCategorizationCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedSubMenu}" Value="{x:Static sm:BookManagementSubMenu.Categorization}">
+                                <Setter Property="BorderBrush" Value="#784FF2"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+        <ContentControl x:Name="BookManagementContent" Grid.Row="1" 
+                    Content="{Binding CurrentView}"/>
+
+    </Grid>
+</UserControl>

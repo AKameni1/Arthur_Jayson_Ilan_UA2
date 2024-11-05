@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Arthur_Jayson_Ilan_UA2.Models.SubMenu;
 
-namespace Arthur_Jayson_Ilan_UA2.ViewsModels
+namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
     public class UserManagementViewModel : INotifyPropertyChanged
     {
