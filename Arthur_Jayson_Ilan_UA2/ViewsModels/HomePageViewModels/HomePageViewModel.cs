@@ -317,6 +317,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                 "rapports" => new ReportsView(),// À implémenter
                 "support" => new SupportView(),// À implémenter
                 "messages" => new MessagesView(),// À implémenter
+                "notifications" => new NotificationsView(),// À implémenter
+                "paramètres" => new SettingsView(),// À implémenter
                 _ => new DashboardView(),
             };
         }
@@ -335,6 +337,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             //NavigationService.Instance.NavigateTo(new AddEntityView()); // À implémenter
             //var addEntityView = new AddEntityView();
             //addEntityView.ShowDialog();
+            App.UserService.AddUser();
         }
 
         private void ExecuteToggleMenu(object? parameter)
@@ -352,9 +355,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             {
                 t.IsSelected = false;
             }
+            SelectedTabContent = GetView(SelectedTabHeader);
 
             // Naviguer vers les paramètres via un UserControl ou une fenêtre
-            NavigationService.Instance.NavigateTo(new SettingsView()); // À implémenter
+            NavigationService.Instance.NavigateTo(SelectedTabContent); // À implémenter
         }
 
         private void ExecuteBellCommand(object? parameter)
@@ -367,9 +371,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             {
                 t.IsSelected = false;
             }
+            SelectedTabContent = GetView(SelectedTabHeader);
 
             // Naviguer vers les messages ou notifications via un UserControl
-            NavigationService.Instance.NavigateTo(new NotificationsView()); // À implémenter
+            NavigationService.Instance.NavigateTo(SelectedTabContent); // À implémenter
         }
 
         private void AddNewReservation(object? parameter)

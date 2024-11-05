@@ -6,11 +6,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Arthur_Jayson_Ilan_UA2.Services;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
 {
-    public class UserService
+    public class UserService : IUserService
     {
+        private Dictionary<string, User> _usernameIndex;
+        private Dictionary<string, User> _emailIndex;
+
         private ObservableCollection<User> _users;
         public ObservableCollection<User> Users => _users;
 
@@ -24,9 +28,18 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public UserService()
         {
             _users = new ObservableCollection<User>();
+            _usernameIndex = new Dictionary<string, User>(StringComparer.OrdinalIgnoreCase);
+            _emailIndex = new Dictionary<string, User>(StringComparer.OrdinalIgnoreCase);
             InitializeUsers();
 
             _users.CollectionChanged += Users_CollectionChanged;
+
+            // Initialiser l'index
+            foreach (var user in _users)
+            {
+                _usernameIndex[user.Username] = user;
+                _emailIndex[user.Email] = user;
+            }
 
             int lastUserId = _users.Any() ? _users.Max(u => u.UserID) : 0;
             IdGenerator.Initialize(lastUserId);
@@ -37,7 +50,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
             // Ajout le super administrateur
             if (!_users.Any(u => u.Role == UserRole.SuperAdmin))
-                RegisterSuperAdmin("Arthur", "A", "admin@example.com");
+                RegisterSuperAdmin("Arthur", "a", "admin@example.com");
 
             // Ajout d'autres utilisateurs par défaut si nécessaire
             RegisterUser("User1", "Password1", "user1@example.com");
@@ -56,6 +69,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
                     // Actions supplémentaires si nécessaire
                     OnMessageSent($"Nouvel utilisateur ajouté : {newUser.Username}");
+                    //Messenger.Default.Send(new NotificationMessage($"Nouvel utilisateur ajouté : {newUser.Username}"));
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove && e.OldItems != null)
@@ -67,6 +81,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
                     // Actions supplémentaires si nécessaire
                     OnMessageSent($"Utilisateur supprimé : {oldUser.Username}");
+                    //Messenger.Default.Send(new NotificationMessage($"Utilisateur supprimé : {oldUser.Username}"));
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Replace && e.NewItems != null && e.OldItems != null)
@@ -116,6 +131,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             {
                 // Envoyer le message à la vue
                 OnMessageSent(message);
+                //Messenger.Default.Send(new NotificationMessage(message));
             }
         }
 
@@ -138,6 +154,15 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public void RegisterUser(string username, string password, string email)
         {
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("Le nom d'utilisateur ne peut pas être vide.");
+
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Le mot de passe ne peut pas être vide.");
+
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("L'email ne peut pas être vide.");
+
             if (UsernameExists(username))
                 throw new InvalidOperationException("Un utilisateur avec ce nom d'utilisateur existe déjà.");
 
@@ -170,7 +195,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public bool UsernameExists(string username)
         {
-            return _users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            return _users.Any(u => u.Username.Equals(username, StringComparison.Ordinal));
+            //return _usernameIndex.ContainsKey(username);
         }
 
         /// <summary>
@@ -179,6 +205,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public bool EmailExists(string email)
         {
             return _users.Any(u => u.Email.Equals(email, StringComparison.Ordinal));
+            //return _emailIndex.ContainsKey(email);
         }
 
         /// <summary>
@@ -335,6 +362,17 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public int CountUsersByRole(UserRole role)
         {
             return _users.Count(u => u.Role == role);
+        }
+
+        public void AddUser()
+        {
+            int userID = IdGenerator.GetNextUserId();
+            _users.Add(new User(userID));
+        }
+
+        public void MakeNotActive(User user)
+        {
+            user.IsActive = !user.IsActive;
         }
 
         // Autres méthodes pour gérer les utilisateurs

@@ -1,0 +1,12 @@
+﻿<Window x:Class="Arthur_Jayson_Ilan_UA2.Dialogs.Views.EditUserView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Dialogs.Views"
+        mc:Ignorable="d"
+        Title="EditUserView" Height="450" Width="800">
+    <Grid>
+        
+    </Grid>
+</Window>

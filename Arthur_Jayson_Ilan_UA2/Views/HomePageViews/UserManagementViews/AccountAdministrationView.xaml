@@ -4,12 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views.UserManagementViews"
+             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels"
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" >
-    <Grid>
-        <TextBlock Text="Administration des Comptes" 
-           FontSize="24" 
-           HorizontalAlignment="Center" 
-           VerticalAlignment="Center"/>
-        <!-- Ajoutez ici les contrôles nécessaires pour l'administration des comptes -->
+    
+    <UserControl.DataContext>
+        <vm:AccountAdministrationViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <!--<RowDefinition Height="Auto"/>-->
+        </Grid.RowDefinitions>
+
+        <!--Members Datagrid-->
+        <DataGrid Style="{DynamicResource DataGridStyle1}" ItemsSource="{Binding Users}" CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" RowStyle="{DynamicResource DataGridRowStyle1}" x:Name="MembersDataGrid">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn CanUserResize="False" Width="Auto" ElementStyle="{StaticResource CheckBoxStyle1}">
+                    <DataGridCheckBoxColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <CheckBox Style="{DynamicResource CheckBoxStyle1}"/>
+                        </DataTemplate>
+                    </DataGridCheckBoxColumn.HeaderTemplate>
+                </DataGridCheckBoxColumn>
+
+                <DataGridTextColumn Header="ID" IsReadOnly="True" CanUserResize="False" CanUserReorder="False" Width="Auto" Binding="{Binding UserID}"/>
+                <DataGridTextColumn Header="Nom d'utilisateur" IsReadOnly="True" CanUserResize="False" Width="Auto" Binding="{Binding Username}"/>
+                <DataGridTextColumn Header="E-mail" IsReadOnly="True" CanUserResize="False" Width="Auto" Binding="{Binding Email}"/>
+                <DataGridTextColumn Header="Actif" IsReadOnly="True" CanUserResize="False" Width="Auto" Binding="{Binding IsActive}"/>
+                <DataGridTextColumn Header="Date de création" IsReadOnly="True" CanUserResize="False" Width="Auto" Binding="{Binding CreationDate}"/>
+                <DataGridTextColumn Header="Role" IsReadOnly="True" CanUserResize="False" Width="Auto" Binding="{Binding Role}"/>
+
+                <DataGridTemplateColumn Header="Operations" IsReadOnly="True" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource GridEditButton}">
+                                    <Icon:PackIconMaterial Kind="PencilOutline" Style="{StaticResource GridButtonIcon}"/>
+                                </Button>
+
+                                <Button Style="{StaticResource GridRemoveButton}" Margin="5,0,0,0">
+                                    <Icon:PackIconMaterial Kind="DeleteOutline" Style="{StaticResource GridButtonIcon}"/>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

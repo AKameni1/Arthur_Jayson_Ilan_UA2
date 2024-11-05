@@ -11,5 +11,7 @@
     <converters:BoolToBackgroundConverter x:Key="BoolToBackgroundConverter"/>
     <converters:BoolToForegroundConverter x:Key="BoolToForegroundConverter"/>
     <converters:BooleanToWidthConverter x:Key="BooleanToWidthConverter"/>
+    <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+    <converters:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter"/>
 
 </ResourceDictionary>

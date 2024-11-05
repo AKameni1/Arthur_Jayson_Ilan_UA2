@@ -277,7 +277,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                     }
                     else
                     {
-                        await ProceedToResetAsync(user);
+                        if (user.IsActive)
+                            await ProceedToResetAsync(user);
+                        else
+                            ShowEmailError("Action non accordée.");
                     }
                 }
                 else

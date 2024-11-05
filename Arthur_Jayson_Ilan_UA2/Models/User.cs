@@ -23,11 +23,15 @@ namespace Arthur_Jayson_Ilan_UA2.Models
     {
         // Champs privés
         private int _userID;
-        private string _username = "";
-        private string _email = "";
-        private string _passwordHash = "";
+        private string _username = string.Empty;
+        private string _email = string.Empty;
+        private string _passwordHash = string.Empty;
         private UserRole _role;
         private bool _isSuperAdmin;
+        private bool _isActive;
+        private DateTime _creationDate;
+
+        private static Random _random = new Random();
 
         // Propriétés publiques avec notifications de changement
 
@@ -109,8 +113,34 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        public bool IsActive
+        {
+            get => _isActive;
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    OnPropertyChanged(nameof(IsActive));
+                }
+            }
+        }
+
+        public DateTime CreationDate
+        {
+            get => _creationDate;
+            set
+            {
+                if (_creationDate != value)
+                {
+                    _creationDate = value;
+                    OnPropertyChanged(nameof(CreationDate));
+                }
+            }
+        }
+
         // Constructeur avec paramètres
-        public User(int userID, string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false)
+        public User(int userID, string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false, bool isActive = true, DateTime? creationDate = null)
         {
             UserID = userID;
             Username = username;
@@ -118,10 +148,46 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             SetPassword(password);
             Role = role;
             IsSuperAdmin = isSuperAdmin;
+            IsActive = isActive;
+            CreationDate = creationDate ?? DateTime.Now;
+        }
+
+        // Constructeur avec 1 seul paramètre
+        public User(int userID) 
+        {
+            UserID = userID;
+            Username = $"User{userID}";
+            Email = $"{Username.ToLower()}@example.com";
+            SetPassword(GenerateRandomPasswordHash);
+            Role = UserRole.Client;
+            IsSuperAdmin = false;
+            IsActive = true;
+            CreationDate = DateTime.Now;
         }
 
         // Constructeur sans paramètres
         public User() { }
+
+        // Méthode pour afficher la date formatée (facultatif)
+        public string GetFormattedCreationDate()
+        {
+            return CreationDate.ToString("f");
+        }
+
+        // Méthode pour générer un mot de passe hashé aléatoire (simulée ici)
+        private static string GenerateRandomPasswordHash
+        {
+            get
+            {
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                var password = new char[10];
+                for (int i = 0; i < password.Length; i++)
+                {
+                    password[i] = chars[_random.Next(chars.Length)];
+                }
+                return new string(password);
+            }
+        }
 
         // Méthodes
 

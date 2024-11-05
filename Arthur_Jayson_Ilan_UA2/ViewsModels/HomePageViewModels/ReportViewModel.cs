@@ -40,7 +40,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             ShowFinancialReportCommand = new RelayCommand(ExecuteShowFinancialReport);
 
             // Définir la vue par défaut
-            CurrentView = new Catalog();
+            CurrentView = new UsageStatistic();
         }
 
         private void ExecuteShowUsageStatistic(object? parameter)

@@ -219,8 +219,10 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                     // TODO: Implémenter la navigation
 
                     // Connexion réussie, naviguer vers HomePage avec l'objet user
-                    NavigationService.Instance.OpenWindow<HomePage>(user);
-
+                    if (user.IsActive)
+                        NavigationService.Instance.OpenWindow<HomePage>(user);
+                    else
+                        LoginErrorMessage = "Accès refusé.";
                 }
                 else
                 {
