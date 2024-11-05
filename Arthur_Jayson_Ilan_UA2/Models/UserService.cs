@@ -37,11 +37,12 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
             // Ajout le super administrateur
             if (!_users.Any(u => u.Role == UserRole.SuperAdmin))
-                RegisterSuperAdmin("SuperAdmin", "SuperPassword", "admin@example.com");
+                RegisterSuperAdmin("Arthur", "A", "admin@example.com");
 
             // Ajout d'autres utilisateurs par défaut si nécessaire
             RegisterUser("User1", "Password1", "user1@example.com");
             RegisterUser("User2", "Password2", "user2@example.com");
+            RegisterUser("User3", "Password3", "user3@example.com");
         }
 
         private void Users_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -140,6 +141,9 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (UsernameExists(username))
                 throw new InvalidOperationException("Un utilisateur avec ce nom d'utilisateur existe déjà.");
 
+            if (EmailExists(email))
+                throw new InvalidOperationException("Un utilisateur avec cette adresse e-mail existe déjà.");
+
             int userId = IdGenerator.GetNextUserId();
             User newUser = new User(userId, username, email, password);
 
@@ -167,6 +171,14 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public bool UsernameExists(string username)
         {
             return _users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Vérifie si une adresse e-mail existe déjà.
+        /// </summary>
+        public bool EmailExists(string email)
+        {
+            return _users.Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

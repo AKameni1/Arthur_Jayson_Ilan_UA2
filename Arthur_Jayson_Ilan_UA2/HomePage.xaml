@@ -96,7 +96,7 @@
                         <Button Style="{StaticResource MenuButton}" DockPanel.Dock="Bottom" Margin="15,0,15,20" VerticalAlignment="Bottom" Command="{Binding LogoutCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Icon:PackIconMaterial  Kind="Logout" Style="{StaticResource MenuButtonIcon}" Foreground="PaleVioletRed"/>
-                                <TextBlock Text="Déconnexion" Margin="10,0,0,0" Foreground="PaleVioletRed"
+                                <TextBlock Text="Déconnexion" Margin="10,0,0,0" Width="100" Foreground="PaleVioletRed"
                                            Visibility="{Binding IsMenuExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             </StackPanel>
                         </Button>

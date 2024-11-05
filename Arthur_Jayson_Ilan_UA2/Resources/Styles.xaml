@@ -430,6 +430,7 @@ BorderThickness="1" BorderBrush="#E0E6ED">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Width" Value="70"/>
         <Setter Property="Height" Value="45"/>
+        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -446,6 +447,7 @@ BorderThickness="1" BorderBrush="#E0E6ED">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="BorderBrush" Value="#784FF2" />
+                <Setter Property="Background" Value="#eef" />
             </Trigger>
         </Style.Triggers>
     </Style>
