@@ -4,12 +4,70 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views.HomePageViews.ReportViews"
-             mc:Ignorable="d" >
-    <Grid>
-        <TextBlock Text="Statistique d'utilisation" 
-                   FontSize="24" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"/>
-        <!-- Ajoutez ici les contrôles nécessaires pour les statistiques d'utilisation -->
+             xmlns:converters="clr-namespace:Arthur_Jayson_Ilan_UA2.Converters"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ButtonBackground" Color="#4CAF50"/>
+        <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
+        <SolidColorBrush x:Key="TitleTextColor" Color="#4CAF50"/>
+        <SolidColorBrush x:Key="StatTextColor" Color="Black"/>
+
+        <converters:BooleanToWidthConverter x:Key="BooleanToWidthConverter"/>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
+            <Setter Property="Foreground" Value="{StaticResource ButtonForeground}"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <StackPanel>
+            <!-- Title of the Usage Statistics section -->
+            <TextBlock Text="Statistique d'utilisation" 
+                       FontSize="28" 
+                       FontWeight="Bold" 
+                       Foreground="{StaticResource TitleTextColor}" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,20"/>
+
+            <!-- List of Usage Statistics -->
+            <ItemsControl x:Name="UsageStatisticsList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical" Margin="0,10">
+                            <!-- Stat Name -->
+                            <TextBlock Text="{Binding StatName}" 
+                                       FontSize="20" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="{StaticResource StatTextColor}"/>
+                            <!-- Stat Value -->
+                            <TextBlock Text="{Binding StatValue}" 
+                                       FontSize="18" 
+                                       Foreground="{StaticResource StatTextColor}"/>
+
+                            <!-- Bar chart representation of Stat Value -->
+                            <Rectangle Fill="{StaticResource ButtonBackground}" 
+                                       Height="20" 
+                                       Width="{Binding StatValue, Converter={StaticResource BooleanToWidthConverter}}"
+                                       Margin="0,5"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Refresh Button -->
+            <Button Content="Rafraîchir" 
+                    Width="150" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,20"/>
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -4,12 +4,83 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views.HomePageViews.ReportViews"
-             mc:Ignorable="d"  >
-    <Grid>
-        <TextBlock Text="Rapport Financier" 
-                   FontSize="24" 
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="TitleTextColor" Color="#4CAF50"/>
+        <SolidColorBrush x:Key="DataTextColor" Color="Black"/>
+        <SolidColorBrush x:Key="HeaderBackgroundColor" Color="#f1f1f1"/>
+        <SolidColorBrush x:Key="BarChartColor" Color="#2196F3"/>
+        <SolidColorBrush x:Key="ButtonBackgroundColor" Color="#4CAF50"/>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Background" Value="{StaticResource ButtonBackgroundColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <!-- Financial Data Section -->
+        <StackPanel Margin="0,50,0,10">
+            <!-- Total Revenue -->
+            <StackPanel Margin="0,10">
+                <TextBlock Text="Revenu Total:" Foreground="{StaticResource DataTextColor}" FontWeight="Bold"/>
+                <TextBlock Text="{Binding TotalRevenue}" Foreground="{StaticResource DataTextColor}"/>
+            </StackPanel>
+
+            <!-- Total Expenses -->
+            <StackPanel Margin="0,10">
+                <TextBlock Text="Dépenses Totales:" Foreground="{StaticResource DataTextColor}" FontWeight="Bold"/>
+                <TextBlock Text="{Binding TotalExpenses}" Foreground="{StaticResource DataTextColor}"/>
+            </StackPanel>
+
+            <!-- Net Profit -->
+            <StackPanel Margin="0,10">
+                <TextBlock Text="Bénéfice Net:" Foreground="{StaticResource DataTextColor}" FontWeight="Bold"/>
+                <TextBlock Text="{Binding NetProfit}" Foreground="{StaticResource DataTextColor}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Bar Chart Section -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,20,0,10">
+            <Rectangle Fill="{StaticResource BarChartColor}" Height="25" 
+                       Width="{Binding RevenuePercentage}" Margin="0,0,10,0"/>
+            <Rectangle Fill="{StaticResource BarChartColor}" Height="25" 
+                       Width="{Binding ExpensePercentage}" Margin="0,0,10,0"/>
+            <Rectangle Fill="{StaticResource BarChartColor}" Height="25" 
+                       Width="{Binding ProfitPercentage}"/>
+        </StackPanel>
+
+        <!-- Financial Summary Section -->
+        <TextBlock Text="Résumé des Performances Financières"
+                   FontSize="20" 
+                   FontWeight="Bold" 
+                   Foreground="{StaticResource TitleTextColor}" 
                    HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"/>
-        <!-- Ajoutez ici les contrôles nécessaires pour les rapports financiers -->
+                   Margin="0,20,0,10"/>
+
+        <TextBlock Text="Votre entreprise a généré un revenu net de X, avec un profit de Y."
+                   Foreground="{StaticResource DataTextColor}" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,30"/>
+
+        <!-- Refresh Button -->
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                Padding="15,8" FontSize="16" FontWeight="SemiBold" 
+                Background="{StaticResource ButtonBackgroundColor}" Foreground="White" 
+                BorderBrush="{StaticResource ButtonBackgroundColor}" BorderThickness="2" 
+                Margin="0,30,0,20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Image Source="your-icon-path.png" Width="20" Height="20" Margin="0,5"/>
+                <TextBlock Text="Rafraîchir" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </UserControl>
