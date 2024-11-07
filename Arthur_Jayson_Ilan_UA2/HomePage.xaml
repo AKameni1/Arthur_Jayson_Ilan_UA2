@@ -83,7 +83,7 @@
                                             Background="{Binding IsSelected, Converter={StaticResource BoolToBackgroundConverter}}"
                                             Foreground="{Binding IsSelected, Converter={StaticResource BoolToForegroundConverter}}">
                                         <StackPanel Orientation="Horizontal">
-                                            <Icon:PackIconMaterial Kind="{Binding IconKind}" Style="{StaticResource MenuButtonIcon}"/>
+                                            <Icon:PackIconMaterial Kind="{Binding IconKind}" Style="{StaticResource MenuButtonIcon}" ToolTip="{Binding Header}"/>
                                             <TextBlock Text="{Binding Header}" Margin="10,0,0,0" TextWrapping="Wrap" Width="100"
                                                        Visibility="{Binding DataContext.IsMenuExpanded, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                         </StackPanel>
@@ -95,7 +95,7 @@
                         <!-- Logout Button -->
                         <Button Style="{StaticResource MenuButton}" DockPanel.Dock="Bottom" Margin="15,0,15,20" VerticalAlignment="Bottom" Command="{Binding LogoutCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <Icon:PackIconMaterial  Kind="Logout" Style="{StaticResource MenuButtonIcon}" Foreground="PaleVioletRed"/>
+                                <Icon:PackIconMaterial  Kind="Logout" Style="{StaticResource MenuButtonIcon}" Foreground="PaleVioletRed" ToolTip="Déconnexion"/>
                                 <TextBlock Text="Déconnexion" Margin="10,0,0,0" Width="100" Foreground="PaleVioletRed"
                                            Visibility="{Binding IsMenuExpanded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             </StackPanel>
@@ -124,10 +124,10 @@
 
                     <!-- Top Buttons (Minimize and Close) -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Style="{StaticResource TopButton}" Command="{Binding MinimizeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Cursor="Arrow">
+                        <Button Style="{StaticResource TopButton}" Command="{Binding MinimizeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Cursor="Arrow" ToolTip="Réduire">
                             <Icon:PackIconMaterial Kind="WindowMinimize" Width="15" Height="15"/>
                         </Button>
-                        <Button Style="{StaticResource TopButton}" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Cursor="Arrow">
+                        <Button Style="{StaticResource TopButton}" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Cursor="Arrow" ToolTip="Fermer">
                             <Icon:PackIconMaterial Kind="WindowClose" Width="15" Height="15"/>
                         </Button>
                     </StackPanel>

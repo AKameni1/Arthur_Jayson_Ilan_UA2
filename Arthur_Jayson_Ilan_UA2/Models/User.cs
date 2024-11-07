@@ -30,6 +30,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         private bool _isSuperAdmin;
         private bool _isActive;
         private DateTime _creationDate;
+        private bool _isSelected;
 
         private static Random _random = new Random();
 
@@ -139,6 +140,20 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set 
+            { 
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                }
+                
+            }
+        }
+
         // Constructeur avec paramètres
         public User(int userID, string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false, bool isActive = true, DateTime? creationDate = null)
         {
@@ -216,8 +231,11 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// <summary>
         /// Change le rôle de l'utilisateur.
         /// </summary>
-        public void ChangeRole(UserRole newRole)
+        public void ChangeRole(User currentUser, User targetUser, UserRole newRole)
         {
+            if (currentUser == targetUser && currentUser.Role == UserRole.SuperAdmin)
+                throw new InvalidOperationException("Le SuperAdmin ne peut pas modifier son propre rôle.");
+
             if (IsSuperAdmin)
                 throw new InvalidOperationException("Le super administrateur ne peut pas changer son propre rôle.");
 

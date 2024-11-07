@@ -27,5 +27,6 @@ namespace Arthur_Jayson_Ilan_UA2.Services
         ObservableCollection<User> GetUsersByRole(UserRole role);
         int CountUsersByRole(UserRole role);
         void MakeNotActive(User user);
+        void Logout();
     }
 }

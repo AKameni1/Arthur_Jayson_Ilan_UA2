@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views.UserManagementViews"
              xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels"
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" >
     
     <UserControl.DataContext>
@@ -14,14 +15,40 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <!--<RowDefinition Height="Auto"/>-->
         </Grid.RowDefinitions>
 
+        <!-- Notification Message -->
+        <materialDesign:Snackbar x:Name="NotificationSnackbar" Grid.Row="0" MessageQueue="{Binding MessageQueue}" FontWeight="SemiBold" Foreground="Green" Width="Auto"/>
+
+        <!-- Bouton de suppression multiple -->
+        <Button Grid.Row="1"
+                Command="{Binding DeleteMultipleUsersCommand}"
+                Visibility="{Binding CanShowDeleteMultipleButton, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Style="{StaticResource GridRemoveButton}"
+                Margin="0,10,0,15"
+                HorizontalAlignment="Right"
+                Padding="10,5">
+            <StackPanel Orientation="Horizontal">
+                <Icon:PackIconMaterial Kind="DeleteOutline" />
+                <TextBlock Text="Supprimer" Margin="5,0"/>
+            </StackPanel>
+        </Button>
+
         <!--Members Datagrid-->
-        <DataGrid Style="{DynamicResource DataGridStyle1}" ItemsSource="{Binding Users}" CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" RowStyle="{DynamicResource DataGridRowStyle1}" x:Name="MembersDataGrid">
+        <DataGrid Style="{DynamicResource DataGridStyle1}"
+                  ItemsSource="{Binding Users}"
+                  CellStyle="{DynamicResource DataGridCellStyle1}"
+                  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}"
+                  RowStyle="{DynamicResource DataGridRowStyle1}"
+                  x:Name="MembersDataGrid"
+                  Grid.Row="2"
+                  SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                  SelectionMode="Extended">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn CanUserResize="False" Width="Auto" ElementStyle="{StaticResource CheckBoxStyle1}">
+                <DataGridCheckBoxColumn CanUserResize="False" Width="Auto" ElementStyle="{StaticResource CheckBoxStyle1}" Binding="{Binding IsSelected, Mode=TwoWay}">
                     <DataGridCheckBoxColumn.HeaderTemplate>
                         <DataTemplate>
                             <CheckBox Style="{DynamicResource CheckBoxStyle1}"/>
@@ -39,15 +66,60 @@
                 <DataGridTemplateColumn Header="Operations" IsReadOnly="True" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Style="{StaticResource GridEditButton}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="EditButton"
+                                        Style="{StaticResource GridEditButton}"
+                                        Command="{Binding DataContext.EditUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
                                     <Icon:PackIconMaterial Kind="PencilOutline" Style="{StaticResource GridButtonIcon}"/>
                                 </Button>
 
-                                <Button Style="{StaticResource GridRemoveButton}" Margin="5,0,0,0">
+                                <Button x:Name="DeleteButton"
+                                        Style="{StaticResource GridRemoveButton}"
+                                        Margin="5,0,0,0"
+                                        Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="Collapsed">
                                     <Icon:PackIconMaterial Kind="DeleteOutline" Style="{StaticResource GridButtonIcon}"/>
                                 </Button>
                             </StackPanel>
+
+                            <DataTemplate.Triggers>
+                                <!-- Masquer tous les boutons si la ligne représente le SuperAdmin et le currentUser n'est pas SuperAdmin -->
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Role}" Value="SuperAdmin" />
+                                        <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="EditButton" Property="Visibility" Value="Collapsed" />
+                                </MultiDataTrigger>
+
+                                <!-- Afficher DeleteButton si currentUser est SuperAdmin et rowUser n'est pas SuperAdmin -->
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Role}" Value="Client"/>
+                                        <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                                
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Role}" Value="Administrator"/>
+                                        <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                                
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Role}" Value="Librarian"/>
+                                        <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                            </DataTemplate.Triggers>
+
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

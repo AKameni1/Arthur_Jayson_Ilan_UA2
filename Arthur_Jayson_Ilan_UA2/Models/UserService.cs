@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Arthur_Jayson_Ilan_UA2.Services;
 
@@ -24,6 +25,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         {
             MessageSent?.Invoke(this, message);
         }
+
+        public User CurrentUser { get; private set; } = new User();
 
         public UserService()
         {
@@ -69,7 +72,6 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
                     // Actions supplémentaires si nécessaire
                     OnMessageSent($"Nouvel utilisateur ajouté : {newUser.Username}");
-                    //Messenger.Default.Send(new NotificationMessage($"Nouvel utilisateur ajouté : {newUser.Username}"));
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove && e.OldItems != null)
@@ -81,7 +83,6 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
                     // Actions supplémentaires si nécessaire
                     OnMessageSent($"Utilisateur supprimé : {oldUser.Username}");
-                    //Messenger.Default.Send(new NotificationMessage($"Utilisateur supprimé : {oldUser.Username}"));
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Replace && e.NewItems != null && e.OldItems != null)
@@ -131,7 +132,6 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             {
                 // Envoyer le message à la vue
                 OnMessageSent(message);
-                //Messenger.Default.Send(new NotificationMessage(message));
             }
         }
 
@@ -154,14 +154,14 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public void RegisterUser(string username, string password, string email)
         {
-            if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("Le nom d'utilisateur ne peut pas être vide.");
+            //if (string.IsNullOrWhiteSpace(username))
+            //    throw new ArgumentException("Le nom d'utilisateur ne peut pas être vide.");
 
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentException("Le mot de passe ne peut pas être vide.");
+            //if (string.IsNullOrWhiteSpace(password))
+            //    throw new ArgumentException("Le mot de passe ne peut pas être vide.");
 
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("L'email ne peut pas être vide.");
+            //if (string.IsNullOrWhiteSpace(email))
+            //    throw new ArgumentException("L'email ne peut pas être vide.");
 
             if (UsernameExists(username))
                 throw new InvalidOperationException("Un utilisateur avec ce nom d'utilisateur existe déjà.");
@@ -184,9 +184,12 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
             if (user != null && user.VerifyPassword(password))
             {
+                CurrentUser = user; // Mettre à jour le currentUser dans le service
+                OnMessageSent($"Utilisateur '{user.Username}' authentifié avec succès.");
                 return user;
             }
 
+            OnMessageSent("Échec de l'authentification. Nom d'utilisateur ou mot de passe incorrect.");
             return null;
         }
 
@@ -238,6 +241,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public void UpdatePassword(User user, string newPassword)
         {
             user.ChangePassword(newPassword);
+            OnMessageSent($"Mot de passe de l'utilisateur '{user.Username}' mis à jour.");
         }
 
         /// <summary>
@@ -245,10 +249,11 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public void UpdateEmail(User user, string newEmail)
         {
-            if (string.IsNullOrWhiteSpace(newEmail))
-                throw new ArgumentException("L'email ne peut pas être vide ou null.");
+            if (string.IsNullOrWhiteSpace(newEmail) && !Regex.IsMatch(newEmail, @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$"))
+                throw new ArgumentException("L'email est invalide.");
 
             user.Email = newEmail;
+            OnMessageSent($"Email de l'utilisateur '{user.Username}' mis à jour en {newEmail}.");
         }
 
         /// <summary>
@@ -263,6 +268,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
                 throw new InvalidOperationException("Un utilisateur avec ce nom d'utilisateur existe déjà.");
 
             user.Username = newUsername;
+            OnMessageSent($"Nom d'utilisateur mis à jour en '{newUsername}'.");
         }
 
         /// <summary>
@@ -282,7 +288,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (_users.Count(u => u.Role == UserRole.Administrator) >= 4)
                 throw new InvalidOperationException("Nombre maximal d'administrateurs atteint.");
 
-            targetUser.ChangeRole(UserRole.Administrator);
+            targetUser.ChangeRole(currentUser, targetUser, UserRole.Administrator);
+            OnMessageSent($"L'utilisateur '{targetUser.Username}' a été promu au rôle d'administrateur.");
         }
 
         /// <summary>
@@ -302,7 +309,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (_users.Count(u => u.Role == UserRole.Librarian) >= 3)
                 throw new InvalidOperationException("Nombre maximal de bibliothécaires atteint.");
 
-            targetUser.ChangeRole(UserRole.Librarian);
+            targetUser.ChangeRole(currentUser, targetUser, UserRole.Librarian);
+            OnMessageSent($"L'utilisateur '{targetUser.Username}' a été promu au rôle de bibliothécaire.");
         }
 
         /// <summary>
@@ -319,7 +327,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (targetUser.Role == UserRole.Client)
                 throw new InvalidOperationException("L'utilisateur est déjà client.");
 
-            targetUser.ChangeRole(UserRole.Client);
+            targetUser.ChangeRole(currentUser, targetUser, UserRole.Client);
+            OnMessageSent($"L'utilisateur '{targetUser.Username}' a été rétrogradé au rôle de client.");
         }
 
         /// <summary>
@@ -337,6 +346,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
             if (!removed)
                 throw new ArgumentException("L'utilisateur spécifié n'existe pas.");
+            else
+                OnMessageSent($"Utilisateur '{userToDelete.Username}' supprimé avec succès.");
         }
 
         /// <summary>
@@ -373,6 +384,12 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public void MakeNotActive(User user)
         {
             user.IsActive = !user.IsActive;
+            OnMessageSent($"Le statut actif de l'utilisateur '{user.Username}' a été mis à jour.");
+        }
+
+        public void Logout()
+        {
+            CurrentUser = new User();
         }
 
         // Autres méthodes pour gérer les utilisateurs

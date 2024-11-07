@@ -13,5 +13,6 @@
     <converters:BooleanToWidthConverter x:Key="BooleanToWidthConverter"/>
     <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
     <converters:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter"/>
+    <converters:UserIsSuperAdminConverter x:Key="UserIsSuperAdminConverter"/>
 
 </ResourceDictionary>

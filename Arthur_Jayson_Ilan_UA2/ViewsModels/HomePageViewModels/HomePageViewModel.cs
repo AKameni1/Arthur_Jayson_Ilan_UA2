@@ -13,7 +13,6 @@ using System.Windows.Input;
 using Arthur_Jayson_Ilan_UA2.Commands;
 using Arthur_Jayson_Ilan_UA2.Views;
 using System.Windows;
-using Arthur_Jayson_Ilan_UA2.Views.HomePageViews.ReservationsViews;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
@@ -323,9 +322,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             };
         }
 
-            private void ExecuteLogout(object? parameter)
-        {
-            // Logique de déconnexion si nécessaire
+        private void ExecuteLogout(object? parameter)
+        {           
+            App.UserService.Logout();
             // Naviguer vers la fenêtre de connexion
             NavigationService.Instance.OpenWindow<MainWindow>();
         }
