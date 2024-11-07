@@ -3,58 +3,105 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="PlaceholderColor" Color="Gray"/>
-        <SolidColorBrush x:Key="ButtonBackground" Color="#4CAF50"/>
-        <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
 
-        <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-        </Style>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <StackPanel>
+                <materialDesign:Snackbar x:Name="NotificationSnackbar" MessageQueue="{Binding MessageQueue}" FontWeight="SemiBold" Foreground="Green" Width="Auto"/>
 
-        <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="0,0,0,5"/>
-        </Style>
+                <!-- Formulaire de Soumission de Ticket -->
+                <GroupBox Header="Soumettre une Demande d'Assistance" Margin="0,0,0,20">
+                    <StackPanel Margin="10">
+                        <Label Content="Nom :" />
+                        <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" Height="25" Padding="5" Template="{StaticResource TextBoxTemplate1}"/>
 
-        <Style TargetType="Button">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
-            <Setter Property="Foreground" Value="{StaticResource ButtonForeground}"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Width" Value="200"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
-        </Style>
-    </UserControl.Resources>
+                        <Label Content="Email :" />
+                        <TextBox Text="{Binding UserEmail, UpdateSourceTrigger=PropertyChanged}" Height="25" Padding="5" Template="{StaticResource TextBoxTemplate1}"/>
 
-    <Grid Margin="10">
-        <StackPanel>
-            <TextBlock Text="Assistance disponible" 
-                       Visibility="{Binding IsAssistanceAvailable, Converter={StaticResource InverseBooleanConverter}}"/>
+                        <Label Content="Sujet :" />
+                        <TextBox Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged}" Height="30" Padding="6" Template="{StaticResource TextBoxTemplate1}"/>
 
-            <TextBlock Text="Titre du problème :"/>
-            <TextBox x:Name="TitleTextBox" 
-                     Text="{Binding TitleText, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="Décrivez brièvement le problème" 
-                       Foreground="{StaticResource PlaceholderColor}"
-                       IsHitTestVisible="False" 
-                       Visibility="{Binding TitleVisibility}"/>
+                        <Label Content="Description du Problème :" />
+                        <TextBox Text="{Binding ProblemDescription, UpdateSourceTrigger=PropertyChanged}" 
+                                 AcceptsReturn="True" Height="100"
+                                 Padding="5" Template="{StaticResource TextBoxTemplate1}"/>
 
-            <TextBlock Text="Description du problème :"/>
-            <TextBox x:Name="DescriptionTextBox"
-                     AcceptsReturn="True"
-                     Height="100"
-                     Text="{Binding DescriptionText, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="Décrivez le problème en détail"
-                       Foreground="{StaticResource PlaceholderColor}"
-                       IsHitTestVisible="False" 
-                       Visibility="{Binding DescriptionVisibility}"/>
+                        <Label Content="Joindre des Fichiers (Optionnel) :" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding BrowseFilesCommand}" Style="{StaticResource ButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Icon:PackIconMaterial Kind="FileSearch" Margin="2"/>
+                                    <TextBlock Text="Pacourir..." Margin="2" FontWeight="DemiBold"/>
+                                </StackPanel>
+                            </Button>
+                            <TextBlock Text="{Binding SelectedFiles}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
 
-            <Button Content="Joindre un fichier" Width="150"/>
-            <Button Content="Envoyer la demande"/>
-        </StackPanel>
-    </Grid>
+                        <Button Content="Soumettre" Command="{Binding SubmitTicketCommand}" 
+                                HorizontalAlignment="Right" Style="{StaticResource AddButton}" Cursor="Hand"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Liste des Tickets Soumis -->
+                <GroupBox Header="Mes Tickets" Margin="0,0,0,20">
+                    <DataGrid Style="{DynamicResource DataGridStyle1}"
+                              ItemsSource="{Binding UserTickets}"
+                              CellStyle="{DynamicResource DataGridCellStyle1}"
+                              ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}"
+                              RowStyle="{DynamicResource DataGridRowStyle1}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              CanUserAddRows="False" Height="300">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn CanUserResize="False" Width="Auto" ElementStyle="{StaticResource CheckBoxStyle1}">
+                                <DataGridCheckBoxColumn.HeaderTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{DynamicResource CheckBoxStyle1}"/>
+                                    </DataTemplate>
+                                </DataGridCheckBoxColumn.HeaderTemplate>
+                            </DataGridCheckBoxColumn>
+
+                            <DataGridTextColumn Header="Sujet" IsReadOnly="True" CanUserResize="False" Binding="{Binding Subject}" Width="*"/>
+                            <DataGridTextColumn Header="Statut" IsReadOnly="True" CanUserResize="False" Binding="{Binding Status}" Width="150"/>
+                            <DataGridTextColumn Header="Date de Soumission" IsReadOnly="True" CanUserResize="False" Binding="{Binding SubmissionDate, StringFormat=d}" Width="150"/>
+                            <DataGridTemplateColumn Header="Actions" IsReadOnly="True" CanUserResize="False" Width="100">
+                                
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding DataContext.ViewTicketCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource GridEditButton}" Height="30" Width="30" ToolTip="Voir les informations du ticket">
+                                            <Icon:PackIconMaterial Kind="Looks" Style="{StaticResource GridButtonIcon}"/>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+
+                <!-- Informations de Contact Direct -->
+                <GroupBox Header="Contact Direct" Margin="0,0,0,20">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Email :" FontWeight="Bold" />
+                        <TextBlock Text="arthur.kamenitchualeu@gmail.com" TextDecorations="Underline" Cursor="Hand" 
+                                   MouseDown="EmailTextBlock_MouseDown"/>
+
+                        <TextBlock Text="Téléphone :" FontWeight="Bold" Margin="0,10,0,0"/>
+                        <TextBlock Text="+1 613 218 3956" TextDecorations="Underline" Cursor="Hand" 
+                                   MouseDown="PhoneTextBlock_MouseDown"/>
+
+                        <!-- Ajoutez d'autres moyens de contact si nécessaire -->
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+
+
 </UserControl>

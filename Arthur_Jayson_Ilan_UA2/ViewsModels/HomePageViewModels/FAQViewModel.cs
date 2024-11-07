@@ -1,101 +1,95 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Arthur_Jayson_Ilan_UA2.Commands;
+using Arthur_Jayson_Ilan_UA2.Models;
+using MaterialDesignThemes.Wpf;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
     public class FAQViewModel : INotifyPropertyChanged
     {
-        private string _question1Text = string.Empty;
-        private string _question2Text = string.Empty;
-        private string _question3Text = string.Empty;
-        private string _question4Text = string.Empty;
-        private string _question5Text = string.Empty;
+        public ObservableCollection<FAQItem> FAQItems { get; set; }
+        public SnackbarMessageQueue MessageQueue { get; }
 
-        private bool _isQuestion1Expanded;
-        private bool _isQuestion2Expanded;
-        private bool _isQuestion3Expanded;
-        private bool _isQuestion4Expanded;
-        private bool _isQuestion5Expanded;
+        private string _newQuestion = string.Empty;
+        public string NewQuestion
+        {
+            get => _newQuestion;
+            set { _newQuestion = value; OnPropertyChanged(nameof(NewQuestion)); }
+        }
+
+        private string _newAnswer = string.Empty;
+        public string NewAnswer
+        {
+            get => _newAnswer;
+            set { _newAnswer = value; OnPropertyChanged(nameof(NewAnswer)); }
+        }
+
+        public ICommand AddFAQCommand { get; }
+
 
         public FAQViewModel()
         {
             // Initialisation des questions avec des réponses par défaut pour la FAQ
-            Question1Text = "Pour utiliser l'application, veuillez suivre les instructions fournies sur la page d'accueil.";
-            Question2Text = "Pour créer un compte, cliquez sur le bouton 'Inscription' et suivez les étapes indiquées.";
-            Question3Text = "En cas de problème technique, contactez notre équipe support via le formulaire de contact.";
-            Question4Text = "Pour réinitialiser votre mot de passe, cliquez sur le lien 'Mot de passe oublié' sur la page de connexion.";
-            Question5Text = "Oui, vous pouvez supprimer votre compte en contactant le support via le formulaire de contact.";
+            FAQItems =
+            [
+                new(
+                    "Comment emprunter un livre ?",
+                    "Pour emprunter un livre, connectez-vous à votre compte, recherchez le livre souhaité et cliquez sur 'Emprunter'. Vous pourrez ensuite le récupérer à la bibliothèque ou le recevoir par courrier si disponible."
+                ),
+                new(
+                    "Quels sont les horaires d'ouverture de la bibliothèque ?",
+                    "La bibliothèque est ouverte du lundi au vendredi de 9h à 18h, et le samedi de 10h à 16h. Fermée les dimanches et jours fériés."
+                ),
+                new(
+                    "Comment réserver un livre en ligne ?",
+                    "Pour réserver un livre, recherchez-le dans notre catalogue en ligne, puis cliquez sur 'Réserver'. Vous recevrez une confirmation par e-mail dès que le livre sera disponible."
+                ),
+                new(
+                    "Puis-je renouveler mon emprunt en ligne ?",
+                    "Oui, vous pouvez renouveler votre emprunt en vous connectant à votre compte et en accédant à la section 'Emprunts'."
+                ),
+                new(
+                    "Que faire en cas de perte ou de dommage d'un livre emprunté ?",
+                    "Si vous perdez ou endommagez un livre, veuillez contacter le support via le formulaire de contact dans l'application ou par email à support@librarymanagement.com."
+                ),
+                new(
+                    "Comment accéder aux ressources numériques de la bibliothèque ?",
+                    "Pour accéder aux ebooks et aux bases de données, connectez-vous à votre compte et allez dans la section 'Ressources Numériques'."
+                ),
+                new(
+                    "Comment mettre à jour mes informations personnelles ?",
+                    "Allez dans les paramètres de votre compte, cliquez sur 'Informations Personnelles' et mettez à jour vos données. N'oubliez pas de sauvegarder vos modifications."
+                )
+            ];
+
+            AddFAQCommand = new RelayCommand(AddFAQ, CanAddFAQ);
+            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
         }
 
-        public string Question1Text
+        private void AddFAQ(object? parameter)
         {
-            get => _question1Text;
-            set { _question1Text = value; OnPropertyChanged(); OnPropertyChanged(nameof(Question1Visibility)); }
+            if (!string.IsNullOrWhiteSpace(NewQuestion) && !string.IsNullOrWhiteSpace(NewAnswer))
+            {
+                FAQItems.Add(new FAQItem(NewQuestion, NewAnswer));
+                NewQuestion = string.Empty;
+                NewAnswer = string.Empty;
+
+                MessageQueue.Enqueue("Nouvelle question ajoutée avec succès.");
+            }
         }
 
-        public string Question2Text
+        private bool CanAddFAQ(object? parameter)
         {
-            get => _question2Text;
-            set { _question2Text = value; OnPropertyChanged(); OnPropertyChanged(nameof(Question2Visibility)); }
+            return !string.IsNullOrWhiteSpace(NewQuestion) && !string.IsNullOrWhiteSpace(NewAnswer);
         }
-
-        public string Question3Text
-        {
-            get => _question3Text;
-            set { _question3Text = value; OnPropertyChanged(); OnPropertyChanged(nameof(Question3Visibility)); }
-        }
-
-        public string Question4Text
-        {
-            get => _question4Text;
-            set { _question4Text = value; OnPropertyChanged(); OnPropertyChanged(nameof(Question4Visibility)); }
-        }
-
-        public string Question5Text
-        {
-            get => _question5Text;
-            set { _question5Text = value; OnPropertyChanged(); OnPropertyChanged(nameof(Question5Visibility)); }
-        }
-
-        public bool IsQuestion1Expanded
-        {
-            get => _isQuestion1Expanded;
-            set { _isQuestion1Expanded = value; OnPropertyChanged(); }
-        }
-
-        public bool IsQuestion2Expanded
-        {
-            get => _isQuestion2Expanded;
-            set { _isQuestion2Expanded = value; OnPropertyChanged(); }
-        }
-
-        public bool IsQuestion3Expanded
-        {
-            get => _isQuestion3Expanded;
-            set { _isQuestion3Expanded = value; OnPropertyChanged(); }
-        }
-
-        public bool IsQuestion4Expanded
-        {
-            get => _isQuestion4Expanded;
-            set { _isQuestion4Expanded = value; OnPropertyChanged(); }
-        }
-
-        public bool IsQuestion5Expanded
-        {
-            get => _isQuestion5Expanded;
-            set { _isQuestion5Expanded = value; OnPropertyChanged(); }
-        }
-
-        public Visibility Question1Visibility => string.IsNullOrWhiteSpace(Question1Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question2Visibility => string.IsNullOrWhiteSpace(Question2Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question3Visibility => string.IsNullOrWhiteSpace(Question3Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question4Visibility => string.IsNullOrWhiteSpace(Question4Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question5Visibility => string.IsNullOrWhiteSpace(Question5Text) ? Visibility.Collapsed : Visibility.Visible;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

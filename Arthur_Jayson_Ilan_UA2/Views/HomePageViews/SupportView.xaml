@@ -22,7 +22,7 @@
         <!--Tab Buttons-->
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
             <Button Content="FAQ" Width="Auto" Margin="0,0,3,0"
-            Command="{Binding ShowFAQCommand}">
+                    Command="{Binding ShowFAQCommand}">
 
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
@@ -37,7 +37,7 @@
 
             </Button>
             <Button Content="Assistance Technique" Margin="3,0,0,0" Width="Auto"
-            Command="{Binding ShowTechnicalAssistanceCommand}">
+                    Command="{Binding ShowTechnicalAssistanceCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
                         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -52,7 +52,7 @@
         </StackPanel>
 
         <ContentControl x:Name="SupportContent" Grid.Row="1" 
-                Content="{Binding CurrentView}"/>
+                        Content="{Binding CurrentView}"/>
 
     </Grid>
 

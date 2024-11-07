@@ -1,0 +1,138 @@
+﻿<Window x:Class="Arthur_Jayson_Ilan_UA2.Dialogs.Views.ShowTicketView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Dialogs.Views"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        ShowInTaskbar="False"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Title="ShowTicketView" Height="350" Width="400" WindowStartupLocation="CenterScreen">
+
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <!-- Ombre et bordure principale -->
+        <Border Background="#FFF" CornerRadius="10" BorderBrush="#CCC" BorderThickness="1" Padding="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Barre de titre personnalisée -->
+                <Border Background="#623ED0" Height="40" CornerRadius="10,10,0,0" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Description du ticket" 
+                               Foreground="White" 
+                               VerticalAlignment="Center" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Margin="10,0,0,0"/>
+                        <Button Grid.Column="1" 
+                            Content="✕" 
+                            Width="30" 
+                            Height="30" 
+                            Margin="0,5,5,5"
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderThickness="0" 
+                            FontWeight="Bold" 
+                            Cursor="Hand"
+                            ToolTip="Fermer"
+                            Click="CloseButton_Click" >
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource TabButton}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="BorderBrush" Value="#585FF2" />
+                                            <Setter Property="Background" Value="#55f" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                    </Grid>
+                </Border>
+
+                <!-- Contenu principal -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
+                    <Grid Margin="0,10,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Titre -->
+                        <Label Content="Détails du Ticket" FontSize="18" FontWeight="Bold" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,10" />
+
+                        <!-- Identifiant du Ticket -->
+                        <Label Content="Identifiant du Ticket : N­­°" FontWeight="SemiBold" Grid.Row="1" Grid.Column="0" />
+                        <TextBlock Text="{Binding TicketId}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"  />
+
+                        <!-- Statut -->
+                        <Label Content="Statut :" FontWeight="SemiBold" Grid.Row="2" Grid.Column="0" />
+                        <ComboBox SelectedItem="{Binding Status, UpdateSourceTrigger=PropertyChanged}" Width="150" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Template="{StaticResource ComboBoxTemplate1}">
+                            <ComboBoxItem Content="Ouvert" />
+                            <ComboBoxItem Content="En Cours" />
+                            <ComboBoxItem Content="Fermé" />
+                        </ComboBox>
+
+                        <!-- Titre du Ticket -->
+                        <Label Content="Titre :" FontWeight="SemiBold" Grid.Row="3" Grid.Column="0" />
+                        <TextBlock Text="{Binding Subject}" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" />
+
+                        <!-- Description -->
+                        <Label Content="Description :" FontWeight="SemiBold" Grid.Row="4" Grid.Column="0" />
+                        <TextBox Text="{Binding ProblemDescription}" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" 
+                                 IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" />
+
+                        <!-- Date de Création -->
+                        <Label Content="Date de Création :" FontWeight="SemiBold" Grid.Row="5" Grid.Column="0" />
+                        <TextBlock Text="{Binding SubmissionDate, StringFormat=d}" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" />
+
+                        <!-- Utilisateur -->
+                        <Label Content="Utilisateur :" FontWeight="SemiBold" Grid.Row="6" Grid.Column="0" />
+                        <TextBlock Text="{Binding UserName}" Grid.Row="6" Grid.Column="1" />
+                    </Grid>
+                </ScrollViewer>
+
+
+                <!-- Boutons -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,10,20,10">
+                    <Button Content="Fermer" 
+                        Width="100" 
+                        Height="30" 
+                        Command="{Binding CancelCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                        Style="{StaticResource SecondaryButtonStyle}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels;
+
 
 namespace Arthur_Jayson_Ilan_UA2.Views.HomePageViews.SupportViews
 {
@@ -23,6 +26,19 @@ namespace Arthur_Jayson_Ilan_UA2.Views.HomePageViews.SupportViews
         public TechnicalAssistanceView()
         {
             InitializeComponent();
+            DataContext = new TechnicalAssitanceViewModel();
+        }
+
+        private void EmailTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var email = "arthur.kamenitchualeu@gmail.com";
+            Process.Start(new ProcessStartInfo($"mailto:{email}") { UseShellExecute = true });
+        }
+
+        private void PhoneTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var phoneNumber = "+16132183956";
+            Process.Start(new ProcessStartInfo($"tel:{phoneNumber}") { UseShellExecute = true });
         }
     }
 }

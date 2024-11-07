@@ -9,6 +9,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
     public static class IdGenerator
     {
         private static int _currentUserId = 0;
+        private static int _currentTicketId = 0;
         private static readonly object _lock = new object();
 
         /// <summary>
@@ -39,7 +40,32 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
-        // Si vous avez d'autres modèles nécessitant des identifiants uniques,
-        // vous pouvez ajouter des compteurs séparés pour chacun.
+        /// <summary>
+        /// Initialise le générateur avec le dernier identifiant de ticket utilisé.
+        /// </summary>
+        /// <param name="lastTicketId">Le dernier identifiant de ticket utilisé.</param>
+        public static void InitializeTicketId(int lastTicketId)
+        {
+            lock (_lock)
+            {
+                if (lastTicketId >= _currentTicketId)
+                {
+                    _currentTicketId = lastTicketId;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Génère un nouvel identifiant de ticket unique.
+        /// </summary>
+        /// <returns>Un identifiant de ticket unique.</returns>
+        public static int GetNextTicketId()
+        {
+            lock (_lock)
+            {
+                _currentTicketId++;
+                return _currentTicketId;
+            }
+        }
     }
 }

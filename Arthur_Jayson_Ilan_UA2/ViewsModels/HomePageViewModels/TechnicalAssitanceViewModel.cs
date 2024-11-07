@@ -1,113 +1,164 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Arthur_Jayson_Ilan_UA2.Commands;
+using Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels;
+using Arthur_Jayson_Ilan_UA2.Dialogs.Views;
+using Arthur_Jayson_Ilan_UA2.Models;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
     public class TechnicalAssitanceViewModel : INotifyPropertyChanged
     {
-        private string _question1Text = string.Empty;
-        private string _question2Text = string.Empty;
-        private string _question3Text = string.Empty;
-        private string _question4Text = string.Empty;
-        private string _question5Text = string.Empty;
 
-        // Propriétés de texte pour chaque question
-        public string Question1Text
+
+        // Propriétés pour le formulaire de soumission de ticket
+        private string _userName = string.Empty;
+        public string UserName
         {
-            get => _question1Text;
-            set
+            get => _userName;
+            set { _userName = value; OnPropertyChanged(nameof(UserName)); }
+        }
+
+        private string _userEmail = string.Empty;
+        public string UserEmail
+        {
+            get => _userEmail;
+            set { _userEmail = value; OnPropertyChanged(nameof(UserEmail)); }
+        }
+
+        private string _subject = string.Empty;
+        public string Subject
+        {
+            get => _subject;
+            set { _subject = value; OnPropertyChanged(nameof(Subject)); }
+        }
+
+        private string _problemDescription = string.Empty;
+        public string ProblemDescription
+        {
+            get => _problemDescription;
+            set { _problemDescription = value; OnPropertyChanged(nameof(ProblemDescription)); }
+        }
+
+        private string _selectedFiles = string.Empty;
+        public string SelectedFiles
+        {
+            get => _selectedFiles;
+            set { _selectedFiles = value; OnPropertyChanged(nameof(SelectedFiles)); }
+        }
+
+
+        // Collection des tickets de l'utilisateur
+        public ObservableCollection<Ticket> UserTickets { get; }
+        public SnackbarMessageQueue MessageQueue { get; }
+
+        // Commandes
+        public ICommand BrowseFilesCommand { get; }
+        public ICommand SubmitTicketCommand { get; }
+        public ICommand ViewTicketCommand { get; }
+
+        public TechnicalAssitanceViewModel()
+        {
+            // Initialisation des tickets
+            UserTickets = new ObservableCollection<Ticket>();
+
+            // Initialisation des commandes
+            BrowseFilesCommand = new RelayCommand(BrowseFiles);
+            SubmitTicketCommand = new RelayCommand(SubmitTicket, CanSubmitTicket);
+            ViewTicketCommand = new RelayCommand(ViewTicket);
+
+            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
+
+        }
+
+        private void BrowseFiles(object? parameter)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = true;
+            if (openFileDialog.ShowDialog() == true)
             {
-                _question1Text = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Question1Visibility)); // Actualise la visibilité
+                SelectedFiles = string.Join(", ", openFileDialog.FileNames);
+                // Ici, vous pouvez gérer les fichiers joints selon vos besoins (par exemple, les enregistrer temporairement)
             }
         }
 
-        public string Question2Text
+        private void SubmitTicket(object? parameter)
         {
-            get => _question2Text;
-            set
+            // Création d'un nouveau ticket
+            Ticket newTicket = new Ticket
             {
-                _question2Text = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Question2Visibility)); // Actualise la visibilité
-            }
-        }
-
-        public string Question3Text
-        {
-            get => _question3Text;
-            set
-            {
-                _question3Text = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Question3Visibility)); // Actualise la visibilité
-            }
-        }
-
-        public string Question4Text
-        {
-            get => _question4Text;
-            set
-            {
-                _question4Text = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Question4Visibility)); // Actualise la visibilité
-            }
-        }
-
-        public string Question5Text
-        {
-            get => _question5Text;
-            set
-            {
-                _question5Text = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Question5Visibility)); // Actualise la visibilité
-            }
-        }
-
-        // Propriétés de visibilité pour chaque question
-        public Visibility Question1Visibility => string.IsNullOrWhiteSpace(Question1Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question2Visibility => string.IsNullOrWhiteSpace(Question2Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question3Visibility => string.IsNullOrWhiteSpace(Question3Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question4Visibility => string.IsNullOrWhiteSpace(Question4Text) ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility Question5Visibility => string.IsNullOrWhiteSpace(Question5Text) ? Visibility.Collapsed : Visibility.Visible;
-
-        // Autres méthodes
-        public List<string> GetAssistanceMessages()
-        {
-            return new List<string>
-            {
-                "Comment résoudre un problème de connexion ?",
-                "Que faire si l'application ne se charge pas ?",
-                "Comment réinitialiser mon mot de passe ?"
+                UserName = this.UserName,
+                UserEmail = this.UserEmail,
+                Subject = this.Subject,
+                ProblemDescription = this.ProblemDescription,
+                FilePath = this.SelectedFiles
             };
+
+            // Ajout du ticket à la collection
+            UserTickets.Add(newTicket);
+
+            // Réinitialisation des champs du formulaire
+            UserName = string.Empty;
+            UserEmail = string.Empty;
+            Subject = string.Empty;
+            ProblemDescription = string.Empty;
+            SelectedFiles = string.Empty;
+
+            //  système de notification ou de message box
+            MessageQueue.Enqueue("Ticket soumis avec succès.");
         }
 
-        public bool IsAssistanceAvailable(string message)
+        private bool CanSubmitTicket(object? parameter)
         {
-            return !string.IsNullOrWhiteSpace(message);
+            return !string.IsNullOrWhiteSpace(UserName) &&
+                   !string.IsNullOrWhiteSpace(UserEmail) &&
+                   IsValidEmail(UserEmail) &&
+                   !string.IsNullOrWhiteSpace(Subject) &&
+                   !string.IsNullOrWhiteSpace(ProblemDescription);
         }
 
-        public void AddAssistanceMessage(string newMessage)
+        private void ViewTicket(object? parameter)
         {
-            // Logique pour ajouter un message
+            if (parameter is Ticket selectedTicket)
+            {
+                // Implémentez la logique pour afficher les détails du ticket
+                // Par exemple, ouvrir une fenêtre de dialogue avec les informations du ticket
+
+                // Implémenter la logique pour éditer l'utilisateur
+                var showTicketViewModel = new ShowTicketViewModel(selectedTicket);
+                var showTicketView = new ShowTicketView
+                {
+                    DataContext = showTicketViewModel
+                };
+
+                showTicketView.ShowDialog();
+            }
         }
 
-        public string GetAssistanceStatus()
+        private bool IsValidEmail(string email)
         {
-            return "L'assistance est en cours de traitement.";
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -96,28 +96,28 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
         public string Username
         {
             get => _username;
-            set { _username = value; OnPropertyChanged(); _modifiedProperties.Add(nameof(Username)); }
+            set { _username = value; OnPropertyChanged(nameof(Username)); _modifiedProperties.Add(nameof(Username)); }
         }
 
         private string _email = string.Empty;
         public string Email
         {
             get => _email;
-            set { _email = value; OnPropertyChanged(); _modifiedProperties.Add(nameof(Email)); }
+            set { _email = value; OnPropertyChanged(nameof(Email)); _modifiedProperties.Add(nameof(Email)); }
         }
 
         private UserRole _role;
         public UserRole Role
         {
             get => _role;
-            set { _role = value; OnPropertyChanged(); _modifiedProperties.Add(nameof(Role)); }
+            set { _role = value; OnPropertyChanged(nameof(Role)); _modifiedProperties.Add(nameof(Role)); }
         }
 
         private bool _isActive;
         public bool IsActive
         {
             get => _isActive;
-            set { _isActive = value; OnPropertyChanged(); _modifiedProperties.Add(nameof(IsActive)); }
+            set { _isActive = value; OnPropertyChanged(nameof(IsActive)); _modifiedProperties.Add(nameof(IsActive)); }
         }
 
         public ICommand SaveCommand { get; }
@@ -245,7 +245,7 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
 
         // Implémentation de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
