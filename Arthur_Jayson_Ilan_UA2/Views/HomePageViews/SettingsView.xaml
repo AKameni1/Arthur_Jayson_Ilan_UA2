@@ -3,9 +3,99 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views"
-             mc:Ignorable="d" >
-    <Grid>
-        <TextBlock Text="Bienvenue sur les paramètres !" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <!-- Style pour les boutons arrondis avec animation -->
+        <Style x:Key="AnimatedRoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#5E35B1" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Width" Value="130" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="20" 
+                                Padding="10" 
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#D1C4E9"
+                                                            Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#5E35B1"
+                                                            Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <StackPanel>
+            <!-- Section Pseudo et Email -->
+            <Grid VerticalAlignment="Top" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Section Pseudo -->
+                <StackPanel Grid.Column="0" Margin="10">
+                    <TextBlock Text="Pseudo actuel" FontSize="14" FontWeight="SemiBold" Foreground="Gray" />
+                    <TextBlock Text="ArthurSuperAdmin" FontSize="16" FontWeight="Bold" Foreground="Black" Margin="0,5,0,15" />
+                    <StackPanel>
+                        <TextBlock Text="Nouveau pseudo" FontSize="12" Foreground="Gray" Margin="0,0,0,5" />
+                        <TextBox Height="35" Margin="0,0,0,10" />
+                        <Button Content="Enregistrer" Style="{StaticResource AnimatedRoundedButtonStyle}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Section Email -->
+                <StackPanel Grid.Column="1" Margin="10">
+                    <TextBlock Text="Email actuel" FontSize="14" FontWeight="SemiBold" Foreground="Gray" />
+                    <TextBlock Text="arthur.superadmin@example.com" FontSize="16" FontWeight="Bold" Foreground="Black" Margin="0,5,0,15" />
+                    <StackPanel>
+                        <TextBlock Text="Nouvel email" FontSize="12" Foreground="Gray" Margin="0,0,0,5" />
+                        <TextBox Height="35" Margin="0,0,0,10" />
+                        <Button Content="Enregistrer" Style="{StaticResource AnimatedRoundedButtonStyle}" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- Section Mot de passe -->
+            <StackPanel VerticalAlignment="Top" Margin="10,20,10,0">
+                <TextBlock Text="Changer votre mot de passe" FontSize="18" FontWeight="Bold" Foreground="#5E35B1" Margin="0,0,0,15" />
+                <StackPanel>
+                    <TextBlock Text="Nouveau mot de passe" FontSize="12" Foreground="Gray" Margin="0,0,0,5" />
+                    <PasswordBox Height="35" Margin="0,0,0,10" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Confirmer le mot de passe" FontSize="12" Foreground="Gray" Margin="0,0,0,5" />
+                    <PasswordBox Height="35" Margin="0,0,0,10" />
+                </StackPanel>
+                <Button Content="Enregistrer" Style="{StaticResource AnimatedRoundedButtonStyle}" />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </UserControl>
