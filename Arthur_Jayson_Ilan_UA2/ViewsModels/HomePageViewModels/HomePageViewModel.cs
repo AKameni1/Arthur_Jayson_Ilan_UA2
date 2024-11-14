@@ -198,10 +198,15 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                     Header = "Profil",
                     IconKind = "Account"
                 },
+                //new TabItemModel
+                //{
+                //    Header = "Messages",
+                //    IconKind = "Message"
+                //},
                 new TabItemModel
                 {
-                    Header = "Messages",
-                    IconKind = "Message"
+                    Header = "Support",
+                    IconKind = "HelpCircle"
                 }
             };
 
@@ -235,11 +240,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                         Header = "Rapports",
                         IconKind = "ChartBox"
                     });
-                    Tabs.Add(new TabItemModel
-                    {
-                        Header = "Support",
-                        IconKind = "HelpCircle"
-                    });
                     break;
 
                 case UserRole.Librarian:
@@ -258,11 +258,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                     {
                         Header = "Rapports",
                         IconKind = "ChartBox"
-                    });
-                    Tabs.Add(new TabItemModel
-                    {
-                        Header = "Support",
-                        IconKind = "HelpCircle"
                     });
                     break;
 

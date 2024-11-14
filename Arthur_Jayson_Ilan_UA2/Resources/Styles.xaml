@@ -274,7 +274,51 @@
     <!--EndRegion-->
     
     <!--Region HomeStyle-->
-    
+
+    <Style x:Key="AnimatedRoundedButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#5E35B1" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Width" Value="130" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                        CornerRadius="20" 
+                        Padding="10" 
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    To="#D1C4E9"
+                                                    Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    To="#5E35B1"
+                                                    Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="TopButton" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="#6E7783" />
@@ -524,6 +568,39 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#F44336" />
             </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="GridRemoveAllButton" TargetType="Button" BasedOn="{StaticResource GridRemoveButton}">
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <TranslateTransform Y="50" />
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <!-- Trigger animation when Visibility changes -->
+            <DataTrigger Binding="{Binding Visibility, RelativeSource={RelativeSource Self}}" Value="Visible">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetProperty="RenderTransform.Y"
+                                    From="50" To="0" Duration="0:0:0.3" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetProperty="RenderTransform.Y"
+                                    From="0" To="-50" Duration="0:0:0.3" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 

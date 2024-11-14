@@ -35,6 +35,24 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             set { _selectedUser = value; OnPropertyChanged(nameof(SelectedUser)); }
         }
 
+        private bool _isAllSelected;
+        public bool IsAllSelected
+        {
+            get => _isAllSelected;
+            set
+            {
+                _isAllSelected = value;
+                OnPropertyChanged(nameof(IsAllSelected));
+
+                // Mettre à jour la sélection pour chaque utilisateur
+                foreach (var user in Users)
+                {
+                    user.IsSelected = _isAllSelected;
+                }
+            }
+        }
+
+
         public static bool IsCurrentUserSuperAdmin => App.UserService.CurrentUser?.Role == UserRole.SuperAdmin;
 
         // Commandes
@@ -60,6 +78,17 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             {
                 user.PropertyChanged += User_PropertyChanged;
             }
+
+            Users.CollectionChanged += (s, e) =>
+            {
+                if (e.NewItems != null)
+                {
+                    foreach (User user in e.NewItems)
+                    {
+                        user.PropertyChanged += User_PropertyChanged;
+                    }
+                }
+            };
         }
 
         private void User_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -68,8 +97,16 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             {
                 OnPropertyChanged(nameof(SelectedUsersCount));
                 OnPropertyChanged(nameof(CanShowDeleteMultipleButton));
+
+                // Met à jour `IsAllSelected` en fonction de l'état actuel des utilisateurs sélectionnés
+                if (Users.All(u => u.IsSelected))
+                    IsAllSelected = true;
+                else if (Users.All(u => !u.IsSelected))
+                    IsAllSelected = false;
             }
         }
+
+
 
         // Propriété pour compter les utilisateurs sélectionnés
         public int SelectedUsersCount => Users.Count(u => u.IsSelected && u.Role != UserRole.SuperAdmin);
@@ -105,7 +142,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                     }
                     MessageQueue.Enqueue($"{usersToDelete.Count} utilisateurs supprimés avec succès.");
                     // Rafraîchir la liste des utilisateurs
-                    //Users = App.UserService.GetAllUsers();
+                    Users = App.UserService.GetAllUsers();
                 }
                 catch (Exception ex)
                 {

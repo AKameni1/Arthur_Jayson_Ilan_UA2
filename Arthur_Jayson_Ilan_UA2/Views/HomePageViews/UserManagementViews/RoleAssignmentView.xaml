@@ -4,12 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Arthur_Jayson_Ilan_UA2.Views.UserManagementViews"
-             mc:Ignorable="d" >
+             mc:Ignorable="d" FontFamily="{DynamicResource RobotoRegular}" >
     <Grid>
-        <TextBlock Text="Attribution des Rôles" 
+        <TextBlock Text="Attribution des Rôles et Permissions" 
                    FontSize="24" 
                    HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"/>
-        <!-- Ajoutez ici les contrôles nécessaires pour l'attribution des rôles -->
+                   VerticalAlignment="Center" FontFamily="Roboto"/>
+        <!-- Ajoutez ici les contrôles nécessaires pour l'attribution des rôles et permissions -->
     </Grid>
 </UserControl>

@@ -10,15 +10,6 @@ using BCrypt.Net;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
 {
-
-    public enum UserRole
-    {
-        SuperAdmin,
-        Administrator,
-        Librarian,
-        Client
-    }
-
     public class User : INotifyPropertyChanged
     {
         // Champs privés
@@ -26,10 +17,10 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         private string _username = string.Empty;
         private string _email = string.Empty;
         private string _passwordHash = string.Empty;
+        private DateTime _creationDate;
+        private bool _isActive;
         private UserRole _role;
         private bool _isSuperAdmin;
-        private bool _isActive;
-        private DateTime _creationDate;
         private bool _isSelected;
 
         private static Random _random = new Random();
@@ -144,13 +135,22 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         {
             get => _isSelected;
             set 
-            { 
-                if (_isSelected != value)
+            {
+                // Prevent SuperAdmin users from being selected
+                if (Role == UserRole.SuperAdmin)
                 {
-                    _isSelected = value;
-                    OnPropertyChanged(nameof(IsSelected));
+                    _isSelected = false;
+                }
+                else
+                {
+                    if (_isSelected != value)
+                    {
+                        _isSelected = value;
+                        OnPropertyChanged(nameof(IsSelected));
+                    }
                 }
                 
+
             }
         }
 
