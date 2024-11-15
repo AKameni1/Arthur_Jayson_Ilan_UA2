@@ -17,8 +17,7 @@ namespace Arthur_Jayson_Ilan_UA2.Services
         {
             get
             {
-                if (_instance == null)
-                    _instance = new NavigationService();
+                _instance ??= new NavigationService();
                 return _instance;
             }
         }
