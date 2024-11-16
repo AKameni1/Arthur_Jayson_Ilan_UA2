@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,14 @@ using BCrypt.Net;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
 {
+    public enum UserRole
+    {
+        SuperAdmin,
+        Administrator,
+        Librarian,
+        Client
+    }
+
     public class User : INotifyPropertyChanged
     {
         // Champs privés
@@ -27,6 +37,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
         // Propriétés publiques avec notifications de changement
 
+        [Key]
         public int UserID
         {
             get => _userID;
@@ -40,6 +51,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
+        [MaxLength(100)]
         public string Username
         {
             get => _username;
@@ -53,6 +66,9 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
+        [EmailAddress]
+        [MaxLength(100)]
         public string Email
         {
             get => _email;
@@ -66,6 +82,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
         public string PasswordHash
         {
             get => _passwordHash;
@@ -79,6 +96,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
         public UserRole Role
         {
             get => _role;
@@ -105,6 +123,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
         public bool IsActive
         {
             get => _isActive;
@@ -118,6 +137,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
         public DateTime CreationDate
         {
             get => _creationDate;
@@ -131,6 +151,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [NotMapped]
         public bool IsSelected
         {
             get => _isSelected;
@@ -153,6 +174,19 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
             }
         }
+
+        public int? RoleID { get; set; }
+        public Role? RoleEntity { get; set; }
+
+        // Navigation properties
+        public ICollection<UserPermission>? UserPermissions { get; set; }
+        public ICollection<Reservation>? Reservations { get; set; }
+        public ICollection<Loan>? Loans { get; set; }
+        public ICollection<SupportTicket>? SupportTickets { get; set; }
+        public ICollection<TicketResponse>? TicketResponses { get; set; }
+        public ICollection<Notification>? Notifications { get; set; }
+        public ICollection<AuditLog>? AuditLogs { get; set; }       
+        public ICollection<Report>? Reports { get; set; }       
 
         // Constructeur avec paramètres
         public User(int userID, string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false, bool isActive = true, DateTime? creationDate = null)

@@ -7,17 +7,19 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Arthur_Jayson_Ilan_UA2.Services;
+using Arthur_Jayson_Ilan_UA2.Data;
+using Arthur_Jayson_Ilan_UA2.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace Arthur_Jayson_Ilan_UA2.Models
+namespace Arthur_Jayson_Ilan_UA2.Services
 {
     public class UserService : IUserService
     {
-        private Dictionary<string, User> _usernameIndex;
-        private Dictionary<string, User> _emailIndex;
+        private readonly Dictionary<string, User> _usernameIndex;
+        private readonly Dictionary<string, User> _emailIndex;
+        private readonly LibraryContext _context;
 
-        private ObservableCollection<User> _users;
-        public ObservableCollection<User> Users => _users;
+        public ObservableCollection<User> Users { get; }
 
         public event EventHandler<string>? MessageSent;
 
@@ -28,23 +30,25 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
         public User CurrentUser { get; private set; } = new User();
 
-        public UserService()
+        public UserService(LibraryContext context)
         {
-            _users = new ObservableCollection<User>();
+            _context = context;
+
+            Users = new ObservableCollection<User>();
             _usernameIndex = new Dictionary<string, User>(StringComparer.OrdinalIgnoreCase);
             _emailIndex = new Dictionary<string, User>(StringComparer.OrdinalIgnoreCase);
             InitializeUsers();
 
-            _users.CollectionChanged += Users_CollectionChanged;
+            Users.CollectionChanged += Users_CollectionChanged;
 
             // Initialiser l'index
-            foreach (var user in _users)
+            foreach (var user in Users)
             {
                 _usernameIndex[user.Username] = user;
                 _emailIndex[user.Email] = user;
             }
 
-            int lastUserId = _users.Any() ? _users.Max(u => u.UserID) : 0;
+            int lastUserId = Users.Any() ? Users.Max(u => u.UserID) : 0;
             IdGenerator.Initialize(lastUserId);
         }
         private void InitializeUsers()
@@ -52,13 +56,13 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             // Initialiser les utilisateurs
 
             // Ajout le super administrateur
-            if (!_users.Any(u => u.Role == UserRole.SuperAdmin))
+            if (!Users.Any(u => u.Role == UserRole.SuperAdmin))
                 RegisterSuperAdmin("Arthur", "a", "admin@example.com");
 
             // Ajout d'autres utilisateurs par défaut si nécessaire
-            RegisterUser("User1", "Password1", "user1@example.com");
-            RegisterUser("User2", "Password2", "user2@example.com");
-            RegisterUser("User3", "Password3", "user3@example.com");
+            //RegisterUser("User1", "Password1", "user1@example.com");
+            //RegisterUser("User2", "Password2", "user2@example.com");
+            //RegisterUser("User3", "Password3", "user3@example.com");
         }
 
         private void Users_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -102,13 +106,13 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             {
                 // La collection a été réinitialisée
                 // Se désabonner de tous les utilisateurs précédents
-                foreach (var user in _users)
+                foreach (var user in Users)
                 {
                     user.PropertyChanged -= User_PropertyChanged;
                 }
 
                 // Souscrire aux utilisateurs actuels
-                foreach (var user in _users)
+                foreach (var user in Users)
                 {
                     user.PropertyChanged += User_PropertyChanged;
                 }
@@ -140,13 +144,13 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         private void RegisterSuperAdmin(string username, string password, string email)
         {
-            if (_users.Any(u => u.Role == UserRole.SuperAdmin))
+            if (Users.Any(u => u.Role == UserRole.SuperAdmin))
                 throw new InvalidOperationException("Un super administrateur existe déjà");
 
             int userId = IdGenerator.GetNextUserId();
             User superAdmin = new User(userId, username, email, password, UserRole.SuperAdmin, true);
 
-            _users.Add(superAdmin);
+            Users.Add(superAdmin);
         }
 
         /// <summary>
@@ -172,7 +176,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             int userId = IdGenerator.GetNextUserId();
             User newUser = new User(userId, username, email, password);
 
-            _users.Add(newUser);
+            Users.Add(newUser);
         }
 
         /// <summary>
@@ -180,7 +184,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public User? Authenticate(string username, string password)
         {
-            User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.Ordinal));
+            User? user = Users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.Ordinal));
 
             if (user != null && user.VerifyPassword(password))
             {
@@ -198,7 +202,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public bool UsernameExists(string username)
         {
-            return _users.Any(u => u.Username.Equals(username, StringComparison.Ordinal));
+            return Users.Any(u => u.Username.Equals(username, StringComparison.Ordinal));
             //return _usernameIndex.ContainsKey(username);
         }
 
@@ -207,7 +211,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public bool EmailExists(string email)
         {
-            return _users.Any(u => u.Email.Equals(email, StringComparison.Ordinal));
+            return Users.Any(u => u.Email.Equals(email, StringComparison.Ordinal));
             //return _emailIndex.ContainsKey(email);
         }
 
@@ -216,7 +220,9 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public User? FindUserById(int userId)
         {
-            return _users.FirstOrDefault(u => u.UserID == userId);
+            //return Users.FirstOrDefault(u => u.UserID == userId);
+            return _context.Users?.Include(u => u.Role)
+                                  .FirstOrDefault(u => u.UserID == userId);
         }
 
         /// <summary>
@@ -224,7 +230,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public User? FindUserByUsername(string username)
         {
-            return _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            return Users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -232,7 +238,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public User? FindUserByEmail(string email)
         {
-            return _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            return Users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -285,7 +291,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (targetUser.Role == UserRole.Administrator)
                 throw new InvalidOperationException("L'utilisateur est déjà administrateur.");
 
-            if (_users.Count(u => u.Role == UserRole.Administrator) >= 4)
+            if (Users.Count(u => u.Role == UserRole.Administrator) >= 4)
                 throw new InvalidOperationException("Nombre maximal d'administrateurs atteint.");
 
             targetUser.ChangeRole(currentUser, targetUser, UserRole.Administrator);
@@ -306,7 +312,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (targetUser.Role == UserRole.Librarian)
                 throw new InvalidOperationException("L'utilisateur est déjà bibliothécaire.");
 
-            if (_users.Count(u => u.Role == UserRole.Librarian) >= 3)
+            if (Users.Count(u => u.Role == UserRole.Librarian) >= 3)
                 throw new InvalidOperationException("Nombre maximal de bibliothécaires atteint.");
 
             targetUser.ChangeRole(currentUser, targetUser, UserRole.Librarian);
@@ -342,7 +348,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (userToDelete.IsSuperAdmin)
                 throw new InvalidOperationException("Le compte du super administrateur ne peut pas être supprimé.");
 
-            bool removed = _users.Remove(userToDelete);
+            bool removed = Users.Remove(userToDelete);
 
             if (!removed)
                 throw new ArgumentException("L'utilisateur spécifié n'existe pas.");
@@ -355,7 +361,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public ObservableCollection<User> GetAllUsers()
         {
-            return _users;
+            return Users;
         }
 
         /// <summary>
@@ -363,7 +369,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public ObservableCollection<User> GetUsersByRole(UserRole role)
         {
-            var usersByRole = _users.Where(u => u.Role == role);
+            var usersByRole = Users.Where(u => u.Role == role);
             return new ObservableCollection<User>(usersByRole);
         }
 
@@ -372,13 +378,13 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public int CountUsersByRole(UserRole role)
         {
-            return _users.Count(u => u.Role == role);
+            return Users.Count(u => u.Role == role);
         }
 
         public void AddUser()
         {
             int userID = IdGenerator.GetNextUserId();
-            _users.Add(new User(userID));
+            Users.Add(new User(userID));
         }
 
         public void MakeNotActive(User user)

@@ -22,7 +22,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 
     public class Statistic
     {
-        public string StatName { get; set; }
+        public string StatName { get; set; } = string.Empty;
         public double StatValue { get; set; }
     }
 }
