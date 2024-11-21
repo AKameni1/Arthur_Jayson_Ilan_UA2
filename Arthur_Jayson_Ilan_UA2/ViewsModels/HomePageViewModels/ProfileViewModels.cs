@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Arthur_Jayson_Ilan_UA2.ViewsModels;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewModels
 {
-    public class ProfileViewModel : INotifyPropertyChanged
+    public class ProfileViewModel : ViewModelBase
     {
         private User _currentUser = new();
 
         public User CurrentUser
         {
             get => _currentUser;
-            set { _currentUser = value; OnPropertyChanged(); }
+            set { _currentUser = value; OnPropertyChanged(nameof(CurrentUser)); }
         }
 
         public ProfileViewModel()
@@ -21,12 +22,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewModels
                 Email = "arthur@example.com",
                 ProfileImagePath = "./Assets/Images/superAdminAccount.png"
             };
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

@@ -17,7 +17,7 @@ using MaterialDesignThemes.Wpf;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
-    public class AccountAdministrationViewModel : INotifyPropertyChanged
+    public class AccountAdministrationViewModel : ViewModelBase
     {
         private ObservableCollection<User> _users = new ObservableCollection<User>();
         public ObservableCollection<User> Users
@@ -234,13 +234,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         {
             // Mettre à jour la notification ou afficher un message
             MessageQueue.Enqueue(message);
-        }
-
-        // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

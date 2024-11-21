@@ -14,20 +14,20 @@ using Arthur_Jayson_Ilan_UA2.Models.SubMenu;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
-    public class BookManagementViewModel : INotifyPropertyChanged
+    public class BookManagementViewModel : ViewModelBase
     {
         private UserControl _currentView = new();
         private BookManagementSubMenu _selectedSubMenu;
         public UserControl CurrentView
         {
             get => _currentView;
-            set { _currentView = value; OnPropertyChanged(); }
+            set { _currentView = value; OnPropertyChanged(nameof(CurrentView)); }
         }
 
         public BookManagementSubMenu SelectedSubMenu
         {
             get => _selectedSubMenu;
-            set { _selectedSubMenu = value; OnPropertyChanged(); }
+            set { _selectedSubMenu = value; OnPropertyChanged(nameof(CurrentView)); }
         }
 
         public ICommand ShowCatalogCommand { get; }
@@ -55,10 +55,5 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             SelectedSubMenu = BookManagementSubMenu.Categorization;
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

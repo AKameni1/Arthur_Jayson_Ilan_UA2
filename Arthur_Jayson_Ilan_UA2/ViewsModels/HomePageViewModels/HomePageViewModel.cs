@@ -16,7 +16,7 @@ using System.Windows;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
-    public class HomePageViewModel : INotifyPropertyChanged, INavigable
+    public class HomePageViewModel : ViewModelBase, INavigable
     {
         private User _currentUser = new User();
         private string _profileImagePath = string.Empty;
@@ -29,32 +29,32 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         public string ProfileImagePath
         {
             get => _profileImagePath;
-            set { _profileImagePath = value; OnPropertyChanged(); }
+            set { _profileImagePath = value; OnPropertyChanged(nameof(ProfileImagePath)); }
         }
 
         public string SelectedTabHeader
         {
             get => _selectedTabHeader;
-            set { _selectedTabHeader = value; OnPropertyChanged(); }
+            set { _selectedTabHeader = value; OnPropertyChanged(nameof(SelectedTabHeader)); }
         }
 
         public UserControl SelectedTabContent
         {
             get => _selectedTabContent;
             // Mettre à jour le bouton "Ajouter" à chaque changement d'onglet
-            set { _selectedTabContent = value; OnPropertyChanged(); UpdateAddButton(); }
+            set { _selectedTabContent = value; OnPropertyChanged(nameof(SelectedTabContent)); UpdateAddButton(); }
         }
 
         public bool IsMenuExpanded
         {
             get => _isMenuExpanded;
-            set { _isMenuExpanded = value; OnPropertyChanged(); }
+            set { _isMenuExpanded = value; OnPropertyChanged(nameof(IsMenuExpanded)); }
         }
 
         public User CurrentUser
         {
             get => _currentUser;
-            set { _currentUser = value; OnPropertyChanged(); }
+            set { _currentUser = value; OnPropertyChanged(nameof(CurrentUser)); }
         }
 
         // Propriétés pour le bouton "Ajouter"
@@ -62,21 +62,21 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         public Visibility AddButtonVisibility
         {
             get => _addButtonVisibility;
-            set { _addButtonVisibility = value; OnPropertyChanged(); }
+            set { _addButtonVisibility = value; OnPropertyChanged(nameof(AddButtonVisibility)); }
         }
 
         private string _addButtonText = string.Empty;
         public string AddButtonText
         {
             get => _addButtonText;
-            set { _addButtonText = value; OnPropertyChanged(); }
+            set { _addButtonText = value; OnPropertyChanged(nameof(AddButtonText)); }
         }
 
         private ICommand? _addButtonCommand = null;
         public ICommand? AddButtonCommand
         {
             get => _addButtonCommand;
-            set { _addButtonCommand = value; OnPropertyChanged(); }
+            set { _addButtonCommand = value; OnPropertyChanged(nameof(AddButtonCommand)); }
         }
 
         // Commandes spécifiques pour chaque action "Ajouter"
@@ -419,12 +419,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                 // Onglets qui n'ont pas besoin du bouton "Ajouter"
                 AddButtonVisibility = Visibility.Collapsed;
             }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

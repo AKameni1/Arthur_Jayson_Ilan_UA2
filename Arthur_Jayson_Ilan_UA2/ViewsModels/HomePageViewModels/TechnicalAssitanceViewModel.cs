@@ -15,7 +15,7 @@ using Microsoft.Win32;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
-    public class TechnicalAssitanceViewModel : INotifyPropertyChanged
+    public class TechnicalAssitanceViewModel : ViewModelBase
     {
 
 
@@ -154,13 +154,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             {
                 return false;
             }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

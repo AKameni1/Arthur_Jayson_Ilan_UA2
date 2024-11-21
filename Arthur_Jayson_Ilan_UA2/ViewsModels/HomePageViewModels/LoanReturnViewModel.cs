@@ -14,20 +14,20 @@ using Arthur_Jayson_Ilan_UA2.Views.HomePageViews.LoanReturnViews;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
-    public class LoanReturnViewModel : INotifyPropertyChanged
+    public class LoanReturnViewModel : ViewModelBase
     {
         private UserControl _currentView = new();
         private LoanReturnSubMenu _selectedSubMenu;
         public UserControl CurrentView
         {
             get => _currentView;
-            set { _currentView = value; OnPropertyChanged(); }
+            set { _currentView = value; OnPropertyChanged(nameof(CurrentView)); }
         }
 
         public LoanReturnSubMenu SelectedSubMenu
         {
             get => _selectedSubMenu;
-            set { _selectedSubMenu = value; OnPropertyChanged(); }
+            set { _selectedSubMenu = value; OnPropertyChanged(nameof(SelectedSubMenu)); }
         }
 
         public ICommand ShowLoanCommand { get; }
@@ -53,12 +53,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         {
             CurrentView = new Return();
             SelectedSubMenu = LoanReturnSubMenu.Return;
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

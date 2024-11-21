@@ -16,7 +16,7 @@ using System.Security;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
-    public class EmailVerificationViewModel : INotifyPropertyChanged
+    public class EmailVerificationViewModel : ViewModelBase
     {
         //private readonly INavigationService _navigationService;
 
@@ -420,10 +420,5 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                 SuperAdminPassword = newSecurePassword;
             }
         }
-
-        // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

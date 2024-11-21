@@ -15,7 +15,7 @@ using Arthur_Jayson_Ilan_UA2.Views;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
-    public class SignupViewModel : INotifyPropertyChanged
+    public class SignupViewModel : ViewModelBase
     {
         //private readonly INavigationService _navigationService;
 
@@ -445,10 +445,5 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                 Password = newSecurePassword;
             }
         }
-
-        // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -10,7 +10,7 @@ using MaterialDesignThemes.Wpf;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
-    public class FAQViewModel : INotifyPropertyChanged
+    public class FAQViewModel : ViewModelBase
     {
         public ObservableCollection<FAQItem> FAQItems { get; set; }
         public SnackbarMessageQueue MessageQueue { get; }
@@ -86,12 +86,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         private bool CanAddFAQ(object? parameter)
         {
             return !string.IsNullOrWhiteSpace(NewQuestion) && !string.IsNullOrWhiteSpace(NewAnswer);
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

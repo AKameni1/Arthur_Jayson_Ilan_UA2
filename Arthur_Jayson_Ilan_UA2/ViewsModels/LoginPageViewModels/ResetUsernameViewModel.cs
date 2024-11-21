@@ -12,7 +12,7 @@ using Arthur_Jayson_Ilan_UA2.Views;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
-    public class ResetUsernameViewModel : INotifyPropertyChanged
+    public class ResetUsernameViewModel : ViewModelBase
     {
 
         // Propriétés liées au champ de nom d'utilisateur
@@ -148,10 +148,5 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 
             return isValid;
         }
-
-        // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

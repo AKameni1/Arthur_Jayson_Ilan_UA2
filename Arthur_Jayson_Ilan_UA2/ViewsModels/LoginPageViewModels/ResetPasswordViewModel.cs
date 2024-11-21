@@ -14,7 +14,7 @@ using Arthur_Jayson_Ilan_UA2.Views;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
-    public class ResetPasswordViewModel : INotifyPropertyChanged
+    public class ResetPasswordViewModel : ViewModelBase
     {
 
         // Flags pour éviter les boucles infinies
@@ -368,10 +368,5 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                 Password = newSecurePassword;
             }
         }
-
-        // Implémentation de INotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
