@@ -14,26 +14,24 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 {
     public enum UserRole
     {
-        SuperAdmin,
-        Administrator,
+        SuperAdmin = 1,
+        Administrator,        
         Librarian,
         Client
     }
 
+    [Table("user")]
     public class User : INotifyPropertyChanged
     {
         // Champs privés
         private int _userID;
         private string _username = string.Empty;
         private string _email = string.Empty;
-        private string _passwordHash = string.Empty;
+        private string _password = string.Empty;
         private DateTime _creationDate;
         private bool _isActive;
-        private UserRole _role;
         private bool _isSuperAdmin;
         private bool _isSelected;
-
-        private static Random _random = new Random();
 
         // Propriétés publiques avec notifications de changement
 
@@ -83,33 +81,33 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         }
 
         [Required]
-        public string PasswordHash
+        public string Password
         {
-            get => _passwordHash;
+            get => _password;
             private set
             {
-                if (_passwordHash != value)
+                if (_password != value)
                 {
-                    _passwordHash = value;
-                    OnPropertyChanged(nameof(PasswordHash));
+                    _password = value;
+                    OnPropertyChanged(nameof(Password));
                 }
             }
         }
 
         [Required]
+        public int RoleID { get; set; }
+
+        [ForeignKey("RoleID")]
+        public Role RoleEntity { get; set; } = null!;
+
+        [NotMapped]
         public UserRole Role
         {
-            get => _role;
-            set
-            {
-                if (_role != value)
-                {
-                    _role = value;
-                    OnPropertyChanged(nameof(Role));
-                }
-            }
+            get => (UserRole)RoleID;
+            set => RoleID = (int)value;
         }
 
+        [NotMapped]
         public bool IsSuperAdmin
         {
             get => _isSuperAdmin;
@@ -155,9 +153,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public bool IsSelected
         {
             get => _isSelected;
-            set 
+            set
             {
-                // Prevent SuperAdmin users from being selected
                 if (Role == UserRole.SuperAdmin)
                 {
                     _isSelected = false;
@@ -170,13 +167,8 @@ namespace Arthur_Jayson_Ilan_UA2.Models
                         OnPropertyChanged(nameof(IsSelected));
                     }
                 }
-                
-
             }
         }
-
-        public int? RoleID { get; set; }
-        public Role? RoleEntity { get; set; }
 
         // Navigation properties
         public ICollection<UserPermission>? UserPermissions { get; set; }
@@ -185,13 +177,12 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         public ICollection<SupportTicket>? SupportTickets { get; set; }
         public ICollection<TicketResponse>? TicketResponses { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
-        public ICollection<AuditLog>? AuditLogs { get; set; }       
-        public ICollection<Report>? Reports { get; set; }       
+        public ICollection<AuditLog>? AuditLogs { get; set; }
+        public ICollection<Report>? Reports { get; set; }
 
         // Constructeur avec paramètres
-        public User(int userID, string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false, bool isActive = true, DateTime? creationDate = null)
+        public User(string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false, bool isActive = true, DateTime? creationDate = null)
         {
-            UserID = userID;
             Username = username;
             Email = email;
             SetPassword(password);
@@ -202,16 +193,16 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         }
 
         // Constructeur avec 1 seul paramètre
-        public User(int userID) 
+        public User(int userID, UserRole role = UserRole.Client)
         {
             UserID = userID;
             Username = $"User{userID}";
             Email = $"{Username.ToLower()}@example.com";
-            SetPassword(GenerateRandomPasswordHash);
-            Role = UserRole.Client;
+            Password = GenerateRandomPasswordHash;
+            Role = role;
             IsSuperAdmin = false;
             IsActive = true;
-            CreationDate = DateTime.Now;
+            CreationDate = DateTime.UtcNow;
         }
 
         // Constructeur sans paramètres
@@ -230,11 +221,13 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             {
                 const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                 var password = new char[10];
+                var random = new Random();
                 for (int i = 0; i < password.Length; i++)
                 {
-                    password[i] = chars[_random.Next(chars.Length)];
+                    password[i] = chars[random.Next(chars.Length)];
                 }
-                return new string(password);
+                string plainPassword = new(password);
+                return HashPassword(plainPassword);
             }
         }
 
@@ -248,7 +241,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("Le mot de passe ne peut pas être vide.");
 
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+            Password = HashPassword(password);
         }
 
         /// <summary>
@@ -256,21 +249,18 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// </summary>
         public bool VerifyPassword(string password)
         {
-            if (string.IsNullOrEmpty(PasswordHash))
+            if (string.IsNullOrEmpty(Password))
                 throw new InvalidOperationException("Le mot de passe n'a pas été défini.");
 
-            return BCrypt.Net.BCrypt.Verify(password, PasswordHash);
+            return BCrypt.Net.BCrypt.Verify(password, Password);
         }
 
         /// <summary>
         /// Change le rôle de l'utilisateur.
         /// </summary>
-        public void ChangeRole(User currentUser, User targetUser, UserRole newRole)
+        public void ChangeRole(UserRole newRole)
         {
-            if (currentUser == targetUser && currentUser.Role == UserRole.SuperAdmin)
-                throw new InvalidOperationException("Le SuperAdmin ne peut pas modifier son propre rôle.");
-
-            if (IsSuperAdmin)
+            if (IsSuperAdmin && newRole != UserRole.SuperAdmin)
                 throw new InvalidOperationException("Le super administrateur ne peut pas changer son propre rôle.");
 
             if (newRole == UserRole.SuperAdmin)
@@ -290,12 +280,12 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         /// <summary>
         /// Vérifie si l'utilisateur est un administrateur.
         /// </summary>
-        public bool IsAdmin() => Role == UserRole.Administrator;
+        public bool IsAdmin() => RoleEntity != null && RoleEntity.Name.Equals("admin", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Vérifie si l'utilisateur est un bibliothécaire.
         /// </summary>
-        public bool IsLibrarian() => Role == UserRole.Librarian;
+        public bool IsLibrarian() => RoleEntity != null && RoleEntity.Name.Equals("librarian", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Surcharge de la méthode Equals pour comparer les utilisateurs.
@@ -321,5 +311,13 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        /// <summary>
+        /// Méthode statique pour hacher les mots de passe.
+        /// </summary>
+        public static string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
     }
 }

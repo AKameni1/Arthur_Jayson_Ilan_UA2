@@ -267,11 +267,11 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 
             if (isValid)
             {
-                var user = App.UserService.FindUserByEmail(Email.Trim());
+                var user = await App.UserService.FindUserByEmailAsync(Email.Trim());
 
                 if (user != null)
                 {
-                    if (user.IsSuperAdmin)
+                    if (user.RoleID == (int)UserRole.SuperAdmin)
                     {
                         ShowSuperAdminAuthFields();
                     }
@@ -293,7 +293,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         // Méthode pour authentifier le super admin
         private async Task ExecuteAuthenticateSuperAdminAsync(object? parameter)
         {
-            var superAdmin = App.UserService.FindUserByEmail(Email.Trim());
+            var superAdmin = await App.UserService.FindUserByEmailAsync(Email.Trim());
 
             // Conversion de SecureString en string de manière sécurisée
             string? superAdminPassword = ConvertToUnsecureString(SuperAdminPassword);
@@ -321,7 +321,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         private bool ValidateEmail()
         {
             bool isValid = true;
-            string emailPattern = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
+            string emailPattern = @"^(?!.*\.\.)[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,6}$";
             string emailInput = Email.Trim();
             EmailError = string.Empty;
 

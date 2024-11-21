@@ -88,7 +88,7 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
                 }
             }
 
-            SaveCommand = new RelayCommand(Save, CanSave);
+            SaveCommand = new AsyncRelayCommand(SaveAsync, CanSave);
             CancelCommand = new RelayCommand(Cancel);
         }
 
@@ -123,7 +123,7 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
 
-        private void Save(object? parameter)
+        private async Task SaveAsync(object? parameter)
         {
             try
             {
@@ -131,12 +131,12 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
                 // Mettre à jour uniquement les propriétés modifiées
                 if (_modifiedProperties.Contains(nameof(Username)) && Username != _initialUsername)
                 {
-                    App.UserService.UpdateUsername(_user, Username);
+                    await App.UserService.UpdateUsernameAsync(_user, Username);
                 }
 
                 if (_modifiedProperties.Contains(nameof(Email)) && Email != _initialEmail)
                 {
-                    App.UserService.UpdateEmail(_user, Email);
+                    await App.UserService.UpdateEmailAsync(_user, Email);
                 }
 
                 if (_modifiedProperties.Contains(nameof(Role)) && Role != _initialRole)
@@ -146,20 +146,20 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
                         case UserRole.SuperAdmin:
                             break;
                         case UserRole.Administrator:
-                            App.UserService.PromoteToAdmin(App.UserService.CurrentUser, _user);
+                            await App.UserService.PromoteToAdminAsync(App.UserService.CurrentUser, _user);
                             break;
                         case UserRole.Librarian:
-                            App.UserService.PromoteToLibrarian(App.UserService.CurrentUser, _user);
+                            await App.UserService.PromoteToLibrarianAsync(App.UserService.CurrentUser, _user);
                             break;
                         case UserRole.Client:
-                            App.UserService.DemoteToClient(App.UserService.CurrentUser, _user);
+                            await App.UserService.DemoteToClientAsync(App.UserService.CurrentUser, _user);
                             break;
                     }
                 }
 
                 if (_modifiedProperties.Contains(nameof(IsActive)) && IsActive != _initialIsActive)
                 {
-                    App.UserService.MakeNotActive(_user);
+                    await App.UserService.ToggleUserActiveStatusAsync(_user);
                 }
 
                 // Fermer la fenêtre avec un résultat de succès

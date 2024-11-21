@@ -62,11 +62,12 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 
         public AccountAdministrationViewModel()
         {
-            Users = App.UserService.GetAllUsers();
+
+            _ = LoadUsersAsync();
 
             EditUserCommand = new RelayCommand(EditUser, CanEditOrDelete);
             DeleteUserCommand = new RelayCommand(DeleteUser, CanEditOrDelete);
-            DeleteMultipleUsersCommand = new RelayCommand(DeleteMultipleUsers, CanDeleteMultipleUsers);
+            DeleteMultipleUsersCommand = new AsyncRelayCommand(DeleteMultipleUsersAsync, CanDeleteMultipleUsers);
 
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
 
@@ -89,6 +90,24 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                     }
                 }
             };
+        }
+
+        private async Task LoadUsersAsync()
+        {
+            try
+            {
+                var users = await App.UserService.GetAllUsersAsync();
+                Users = new ObservableCollection<User>(users);
+
+                foreach (var user in Users)
+                {
+                    user.PropertyChanged += User_PropertyChanged;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageQueue.Enqueue($"Erreur lors du chargement des utilisateurs : {ex.Message}");
+            }
         }
 
         private void User_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -115,7 +134,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         public bool CanShowDeleteMultipleButton => SelectedUsersCount >= 2 && IsCurrentUserSuperAdmin;
 
         // Commande de suppression multiple
-        private void DeleteMultipleUsers(object? parameter)
+        private async Task DeleteMultipleUsersAsync(object? parameter)
         {
             var usersToDelete = Users.Where(u => u.IsSelected && u.Role != UserRole.SuperAdmin).ToList();
 
@@ -138,11 +157,11 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                 {
                     foreach (var user in usersToDelete)
                     {
-                        App.UserService.DeleteUser(App.UserService.CurrentUser, user);
+                        await App.UserService.DeleteUserAsync(App.UserService.CurrentUser, user);
                     }
                     MessageQueue.Enqueue($"{usersToDelete.Count} utilisateurs supprimés avec succès.");
                     // Rafraîchir la liste des utilisateurs
-                    Users = App.UserService.GetAllUsers();
+                    await LoadUsersAsync();
                 }
                 catch (Exception ex)
                 {
@@ -187,7 +206,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             return parameter is User;
         }
 
-        private void DeleteUser(object? parameter)
+        private async void DeleteUser(object? parameter)
         {
             if (parameter is User userToDelete)
             {
@@ -209,12 +228,13 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                 {
                     try
                     {
-                        App.UserService.DeleteUser(App.UserService.CurrentUser, userToDelete);
+                        await App.UserService.DeleteUserAsync(App.UserService.CurrentUser, userToDelete);
+                        Users.Remove(userToDelete);
                         MessageQueue.Enqueue($"Utilisateur '{userToDelete.Username}' supprimé avec succès.");                        
 
                         if (userToDelete == App.UserService.CurrentUser)
                         {
-                            App.UserService.Logout();
+                            await App.UserService.LogoutAsync();
 
                             MainWindow mainWindow = new MainWindow();
                             mainWindow.Show();

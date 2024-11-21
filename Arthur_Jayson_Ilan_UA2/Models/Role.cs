@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
 {
+    [Table("role")]
     public class Role : INotifyPropertyChanged
     {
         // Champs privés
@@ -46,6 +48,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
             }
         }
 
+        [Required]
         public string Description
         {
             get => _description;
@@ -61,7 +64,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
 
         // Relations
         public ICollection<RolePermission>? RolePermissions { get; set; }
-        public ICollection<User>? Users { get; set; }
+        public ICollection<User>? Users { get; set; } = [];
 
         // Constructeurs
         public Role() { }
@@ -76,7 +79,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         // Méthodes pour ajouter ou retirer des permissions
         public void AddPermission(Permission permission)
         {
-            RolePermissions ??= new List<RolePermission>();
+            RolePermissions ??= [];
 
             if (!RolePermissions.Any(rp => rp.PermissionID == permission.PermissionID))
             {

@@ -16,6 +16,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         Cancelled
     }
 
+    [Table("reservation")]
     public class Reservation : INotifyPropertyChanged
     {
         // Champs privés

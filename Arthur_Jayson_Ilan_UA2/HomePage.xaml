@@ -10,7 +10,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
-        Height="720" Width="1080" WindowStartupLocation="CenterScreen">
+        Height="740" Width="1160" WindowStartupLocation="CenterScreen">
 
 
     <Border Background="#EFF2F7" CornerRadius="30">

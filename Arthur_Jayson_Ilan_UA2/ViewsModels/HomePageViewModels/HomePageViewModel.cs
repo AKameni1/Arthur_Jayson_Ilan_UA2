@@ -13,6 +13,8 @@ using System.Windows.Input;
 using Arthur_Jayson_Ilan_UA2.Commands;
 using Arthur_Jayson_Ilan_UA2.Views;
 using System.Windows;
+using MaterialDesignThemes.Wpf;
+using System.Diagnostics;
 
 namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
@@ -25,6 +27,14 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         private bool _isMenuExpanded = true;
 
         public ObservableCollection<TabItemModel> Tabs { get; set; } = new ObservableCollection<TabItemModel>();
+
+        private ObservableCollection<User> _users = new ObservableCollection<User>();
+        public ObservableCollection<User> Users
+        {
+            get => _users;
+            set { _users = value; OnPropertyChanged(nameof(Users)); }
+        }
+
 
         public string ProfileImagePath
         {
@@ -41,7 +51,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         public UserControl SelectedTabContent
         {
             get => _selectedTabContent;
-            // Mettre à jour le bouton "Ajouter" à chaque changement d'onglet
             set { _selectedTabContent = value; OnPropertyChanged(); UpdateAddButton(); }
         }
 
@@ -83,7 +92,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         public ICommand AddNewMemberCommand { get; }
         public ICommand AddNewBookCommand { get; }
         public ICommand AddNewReservationCommand { get; }
-
+        //public SnackbarMessageQueue MessageQueue { get; }
         public ICommand LogoutCommand { get; }
         public ICommand ToggleMenuCommand { get; }
         public ICommand CogCommand { get; }
@@ -95,9 +104,11 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 
         public HomePageViewModel()
         {
+            _ = LoadUsersAsync();
+
             // Initialisation des commandes
             LogoutCommand = new RelayCommand(ExecuteLogout);
-            AddNewMemberCommand = new RelayCommand(ExecuteAddNewMember);
+            AddNewMemberCommand = new AsyncRelayCommand(ExecuteAddNewMemberAsync, CanAddNewMember);
             ToggleMenuCommand = new RelayCommand(ExecuteToggleMenu);
             CogCommand = new RelayCommand(ExecuteCogCommand);
             BellCommand = new RelayCommand(ExecuteBellCommand);
@@ -106,8 +117,9 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             CloseCommand = new RelayCommand<Window>(ExecuteClose);
             ProfileCommand = new RelayCommand(ExecuteProfile);
 
-            AddNewBookCommand = new RelayCommand(AddNewBook);
-            AddNewReservationCommand = new RelayCommand(AddNewReservation, CanAddNewReservation);
+            AddNewBookCommand = new RelayCommand(ExecuteAddNewBook, CanAddNewBook);
+            AddNewReservationCommand = new RelayCommand(ExecuteAddNewReservation, CanAddNewReservation);
+
         }
 
         private void ExecuteMinimize(Window? window)
@@ -198,11 +210,11 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
                     Header = "Profil",
                     IconKind = "Account"
                 },
-                //new TabItemModel
-                //{
-                //    Header = "Messages",
-                //    IconKind = "Message"
-                //},
+                new TabItemModel
+                {
+                    Header = "Messages",
+                    IconKind = "Message"
+                },
                 new TabItemModel
                 {
                     Header = "Support",
@@ -317,21 +329,59 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             };
         }
 
-        private void ExecuteLogout(object? parameter)
+        private async void ExecuteLogout(object? parameter)
         {           
-            App.UserService.Logout();
+            await App.UserService.LogoutAsync();
             // Naviguer vers la fenêtre de connexion
             NavigationService.Instance.OpenWindow<MainWindow>();
         }
 
-        private void ExecuteAddNewMember(object? parameter)
+        private async Task ExecuteAddNewMemberAsync(object? parameter)
         {
-            // Même si le bouton ne sert pas à ajouter des membres, il peut naviguer vers une autre vue
-            // Exemple : Naviguer vers une vue d'ajout d'entité
-            //NavigationService.Instance.NavigateTo(new AddEntityView()); // À implémenter
-            //var addEntityView = new AddEntityView();
-            //addEntityView.ShowDialog();
-            App.UserService.AddUser();
+            try
+            {
+                int nextUserId = Users.Any() ? Users.Max(u => u.UserID) + 1 : 1;
+
+                User newUser = new User(nextUserId);
+
+                await App.UserService.RegisterUserAsync(newUser.Username, newUser.Password, newUser.Email);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Users.Add(newUser);
+                });
+
+                //await LoadUserAsync();
+
+                // Notification de succès
+                Debug.WriteLine($"Utilisateur '{newUser.Username}' ajouté avec succès.");
+            }
+            catch (Exception ex)
+            {
+                // Gérer les erreurs
+                Debug.WriteLine($"Erreur lors de l'ajout d'un utilisateur : {ex.Message}");
+            }
+        }
+
+        private async Task LoadUsersAsync()
+        {
+            try
+            {
+                var users = await App.UserService.GetAllUsersAsync();
+                Users = new ObservableCollection<User>(users);
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erreur lors du chargement des utilisateurs : {ex.Message}");
+            }
+        }
+
+
+        private bool CanAddNewMember(object? parameter)
+        {
+            // Logique de validation si nécessaire
+            return true;
         }
 
         private void ExecuteToggleMenu(object? parameter)
@@ -371,7 +421,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             NavigationService.Instance.NavigateTo(SelectedTabContent); // À implémenter
         }
 
-        private void AddNewReservation(object? parameter)
+        private void ExecuteAddNewReservation(object? parameter)
         {
             //////////////////////////////
             /////// Logique pour faire une réservation
@@ -379,12 +429,18 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             //addBookView.ShowDialog();
         }
 
-        private void AddNewBook(object? parameter)
+        private void ExecuteAddNewBook(object? parameter)
         {
             //////////////////////////////
             ///// Logique pour faire une réservation
             //var makeReservationView = new MakeReservation(); // Assurez-vous d'avoir cette vue
             //makeReservationView.ShowDialog();
+        }
+
+        private bool CanAddNewBook(object? parameter)
+        {
+            // Logique de validation si nécessaire
+            return true;
         }
 
         private bool CanAddNewReservation(object? parameter)

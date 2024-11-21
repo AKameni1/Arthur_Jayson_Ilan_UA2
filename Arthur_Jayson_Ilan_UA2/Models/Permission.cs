@@ -5,9 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
 {
+    [Table("permission")]
     public class Permission : INotifyPropertyChanged
     {
         // Champs privés

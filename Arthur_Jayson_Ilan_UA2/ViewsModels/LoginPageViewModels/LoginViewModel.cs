@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -27,7 +28,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         {
             //_navigationService = navigationService;
 
-            ConnectCommand = new RelayCommand(ExecuteConnect);
+            ConnectCommand = new AsyncRelayCommand(ExecuteConnectAsync);
             TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
             ResetDataCommand = new RelayCommand(ExecuteResetData);
             NotHaveAccountCommand = new RelayCommand(ExecuteNotHaveAccount);
@@ -168,7 +169,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         public ICommand ResetDataCommand { get; }
         public ICommand NotHaveAccountCommand { get; }
 
-        private void ExecuteConnect(object? parameter)
+        private async Task ExecuteConnectAsync(object? parameter)
         {
             LoginErrorMessage = string.Empty;
 
@@ -199,34 +200,30 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 
             if (!hasError)
             {
-                var user = App.UserService?.Authenticate(Username, password);
-
-                // Effacer la chaîne en mémoire
-                password = null;
-
-                if (user != null)
+                try
                 {
-                    // Connexion réussie
-                    //if (user.IsSuperAdmin)
-                    //{
-                    //    MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //}
-                    // Naviguer vers la vue appropriée
-                    // TODO: Implémenter la navigation
+                    var user = await App.UserService.AuthenticateAsync(Username, password);
 
-                    // Connexion réussie, naviguer vers HomePage avec l'objet user
-                    if (user.IsActive)
-                        NavigationService.Instance.OpenWindow<HomePage>(user);
+                    // Effacer la chaîne en mémoire
+                    password = null;
+
+                    if (user != null)
+                    {
+                        // Connexion réussie
+                        if (user.IsActive)
+                            NavigationService.Instance.OpenWindow<HomePage>(user);
+                        else
+                            LoginErrorMessage = "Accès refusé.";
+                    }
                     else
-                        LoginErrorMessage = "Accès refusé.";
+                    {
+                        LoginErrorMessage = "Nom d'utilisateur ou mot de passe incorrect.";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    LoginErrorMessage = "Nom d'utilisateur ou mot de passse incorrect.";
+                    LoginErrorMessage = $"Une erreur s'est produite : {ex.Message}";
+                    Debug.WriteLine(ex.Message);
                 }
             }
         }

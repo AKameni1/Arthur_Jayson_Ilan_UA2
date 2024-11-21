@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
 {
+    [Table("ticketresponse")]
     public class TicketResponse : INotifyPropertyChanged
     {
         // Champs privés

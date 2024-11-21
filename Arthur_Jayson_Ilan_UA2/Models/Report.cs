@@ -21,6 +21,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         Custom
     }
 
+    [Table("report")]
     public class Report : INotifyPropertyChanged
     {
 

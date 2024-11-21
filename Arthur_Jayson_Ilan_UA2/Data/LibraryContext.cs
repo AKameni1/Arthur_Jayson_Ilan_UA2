@@ -10,22 +10,22 @@ namespace Arthur_Jayson_Ilan_UA2.Data
 {
     public class LibraryContext : DbContext
     {
-        public DbSet<User>? Users { get; set; }
-        public DbSet<Role>? Roles { get; set; }
-        public DbSet<Permission>? Permissions { get; set; }
-        public DbSet<RolePermission>? RolePermissions { get; set; }
-        public DbSet<UserPermission>? UserPermissions { get; set; }
-        public DbSet<Book>? Books { get; set; }
-        public DbSet<Category>? Categories { get; set; }
-        public DbSet<Loan>? Loans { get; set; }
-        public DbSet<Reservation>? Reservations { get; set; }
-        public DbSet<SupportTicket>? SupportTickets { get; set; }
-        public DbSet<TicketResponse>? TicketResponses { get; set; }
-        public DbSet<Notification>? Notifications { get; set; }
-        public DbSet<FAQ>? FAQs { get; set; }
-        public DbSet<AuditLog>? AuditLogs { get; set; }
-        public DbSet<Report>? Reports { get; set; }
-        public DbSet<ReportParameter>? ReportParameters { get; set; }
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Role> Roles { get; set; } = null!;
+        public DbSet<Permission> Permissions { get; set; } = null!;
+        public DbSet<RolePermission> RolePermissions { get; set; } = null!;
+        public DbSet<UserPermission> UserPermissions { get; set; } = null!;
+        public DbSet<Book> Books { get; set; } = null!;    
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<Loan> Loans { get; set; } = null!;
+        public DbSet<Reservation> Reservations { get; set; } = null!;
+        public DbSet<SupportTicket> SupportTickets { get; set; } = null!;
+        public DbSet<TicketResponse> TicketResponses { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
+        public DbSet<FAQ> FAQs { get; set; } = null!;
+        public DbSet<AuditLog> AuditLogs { get; set; } = null!;
+        public DbSet<Report> Reports { get; set; } = null!;
+        public DbSet<ReportParameter> ReportParameters { get; set; } = null!;
 
         public LibraryContext(DbContextOptions<LibraryContext> options) : base(options) { }
 
@@ -167,19 +167,34 @@ namespace Arthur_Jayson_Ilan_UA2.Data
                 .HasIndex(c => c.CategoryName)
                 .IsUnique();
 
+
+            // Configuration des relations et des contraintes
+            modelBuilder.Entity<User>()
+                        .HasOne(u => u.RoleEntity)
+                        .WithMany(r => r.Users)
+                        .HasForeignKey(u => u.RoleID)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+
+            // Configuration des indices uniques
+
             // Unique pour Username et Email dans User
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
+                        .HasIndex(u => u.Username)
+                        .IsUnique();
 
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
+                        .HasIndex(u => u.Email)
+                        .IsUnique();
+
+            modelBuilder.Entity<Role>()
+                        .HasIndex(r => r.Name)
+                        .IsUnique();
 
             // Configuration des enums pour être stockés en tant que chaînes de caractères
-            modelBuilder.Entity<User>()
-                .Property(u => u.Role)
-                .HasConversion<string>();
+            //modelBuilder.Entity<User>()
+            //    .Property(u => u.Role)
+            //    .HasConversion<string>();
 
             modelBuilder.Entity<Book>()
                 .Property(b => b.Availability)

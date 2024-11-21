@@ -97,12 +97,12 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
             ResetErrorMessage = string.Empty;
             ResetSuccessMessage = string.Empty;
 
-            if (ValidateUsername())
+            if (await ValidateUsernameAsync())
             {
                 try
                 {
                     // Mise à jour du nom d'utilisateur via le UserService
-                    App.UserService.UpdateUsername(_currentUser, Username.Trim());
+                    await App.UserService.UpdateUsernameAsync(_currentUser, Username.Trim());
 
                     // Affichage du message de succès
                     ResetSuccessMessage = "Nom d'utilisateur mis à jour avec succès !";
@@ -126,7 +126,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         }
 
         // Méthode de validation du nom d'utilisateur
-        private bool ValidateUsername()
+        private async Task<bool> ValidateUsernameAsync()
         {
             UsernameError = string.Empty;
             ResetErrorMessage = string.Empty;
@@ -140,10 +140,23 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                 UsernameError = "Le nom d'utilisateur ne peut pas être vide.";
                 isValid = false;
             }
-            else if (App.UserService.UsernameExists(newUsername))
+            else
             {
-                UsernameError = "Ce nom d'utilisateur est déjà pris.";
-                isValid = false;
+                try
+                {
+                    bool exists = await App.UserService.FindUserByUsernameAsync(newUsername) != null;
+                    if (exists)
+                    {
+                        UsernameError = "Ce nom d'utilisateur est déjà pris.";
+                        isValid = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Gérer les exceptions, par exemple en enregistrant ou en affichant un message d'erreur
+                    ResetErrorMessage = $"Erreur lors de la validation du nom d'utilisateur : {ex.Message}";
+                    isValid = false;
+                }
             }
 
             return isValid;

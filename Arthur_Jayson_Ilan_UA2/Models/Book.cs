@@ -16,6 +16,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         Reserved
     }
 
+    [Table("book")]
     public class Book : INotifyPropertyChanged
     {
         // Champs privés

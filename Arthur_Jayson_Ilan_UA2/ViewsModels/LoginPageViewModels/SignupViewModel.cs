@@ -288,7 +288,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 
             //_navigationService = navigationService;
 
-            RegisterCommand = new RelayCommand(ExecuteRegister);
+            RegisterCommand = new AsyncRelayCommand(ExecuteRegisterAsync);
             AlreadyHaveAccountCommand = new RelayCommand(ExecuteAlreadyHaveAccount);
             TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
             ToggleConfirmPasswordVisibilityCommand = new RelayCommand(ToggleConfirmPasswordVisibility);
@@ -296,7 +296,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
             IsConfirmPasswordVisible = false;
         }
 
-        private async void ExecuteRegister(object? parameter)
+        private async Task ExecuteRegisterAsync(object? parameter)
         {
             // Réinitialiser les messages
             SignupErrorMessage = string.Empty;
@@ -355,7 +355,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                 {
 
                     // Appeler le service d'inscription
-                    App.UserService.RegisterUser(Username, password, Email);
+                    await App.UserService.RegisterUserAsync(Username, password, Email);
 
                     // Effacer les chaînes en mémoire
                     password = null;
@@ -400,7 +400,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 
         private static bool IsValidEmail(string email)
         {
-            string emailPattern = @"^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$";
+            string emailPattern = @"^(?!.*\.\.)[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,6}$";
             return Regex.IsMatch(email, emailPattern);
         }
 

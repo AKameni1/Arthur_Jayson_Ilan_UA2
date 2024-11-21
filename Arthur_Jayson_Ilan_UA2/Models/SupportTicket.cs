@@ -16,6 +16,7 @@ namespace Arthur_Jayson_Ilan_UA2.Models
         Closed
     }
 
+    [Table("supportticket")]
     public class SupportTicket : INotifyPropertyChanged
     {
 

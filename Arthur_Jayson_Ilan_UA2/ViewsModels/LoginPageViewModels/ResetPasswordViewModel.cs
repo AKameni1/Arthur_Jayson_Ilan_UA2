@@ -254,7 +254,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
                     string? password = ConvertToUnsecureString(Password);
 
                     // Mise à jour du mot de passe via le UserService
-                    App.UserService.UpdatePassword(_currentUser, password);
+                    await App.UserService.UpdatePasswordAsync(_currentUser, password);
 
                     // Effacer la chaîne en mémoire
                     password = null;
