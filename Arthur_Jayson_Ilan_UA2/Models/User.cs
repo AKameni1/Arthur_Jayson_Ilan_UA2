@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Arthur_Jayson_Ilan_UA2.Services;
 using BCrypt.Net;
 
 namespace Arthur_Jayson_Ilan_UA2.Models
