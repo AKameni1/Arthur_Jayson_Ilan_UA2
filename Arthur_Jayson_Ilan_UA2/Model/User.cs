@@ -8,6 +8,7 @@ namespace Arthur_Jayson_Ilan_UA2.Model
 {
     public partial class User : BaseModel
     {
+        private static Random _random = new Random();
         public int UserId { get; }
 
         private int _roleId;
@@ -23,6 +24,8 @@ namespace Arthur_Jayson_Ilan_UA2.Model
                 }
             }
         }
+
+        public string RoleName => ((UserRole)RoleId).ToString();
 
 
         private string _username = string.Empty;
@@ -234,8 +237,30 @@ namespace Arthur_Jayson_Ilan_UA2.Model
         }
 
         // Constructeur par défaut
-        public User() { }
+        public User()
+        {
+            Username = $"User{_random.Next(1, 10000)}";
+            Email = $"{Username.ToLower()}@example.com";
+            SetPassword(GenerateRandomPasswordHash);
+            RoleId = (int)UserRole.Client;
+            IsSuperAdmin = false;
+            IsActive = 1;
+            CreationDate = DateTime.Now;
+        }
 
+        private static string GenerateRandomPasswordHash
+        {
+            get
+            {
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                var password = new char[10];
+                for (int i = 0; i < password.Length; i++)
+                {
+                    password[i] = chars[_random.Next(chars.Length)];
+                }
+                return new string(password);
+            }
+        }
 
         public void SetPassword(string password)
         {

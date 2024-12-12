@@ -25,7 +25,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         public LoginViewModel()
         {
 
-            ConnectCommand = new RelayCommand(ExecuteConnect);
+            ConnectCommand = new AsyncRelayCommand(ExecuteConnectAsync);
             TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
             ResetDataCommand = new RelayCommand(ExecuteResetData);
             NotHaveAccountCommand = new RelayCommand(ExecuteNotHaveAccount);
@@ -47,7 +47,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
             }
         }
 
-        private SecureString _password = new SecureString();
+        private SecureString _password = new();
         public SecureString Password
         {
             get => _password;
@@ -166,7 +166,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
         public ICommand ResetDataCommand { get; }
         public ICommand NotHaveAccountCommand { get; }
 
-        private void ExecuteConnect(object? parameter)
+        private async Task ExecuteConnectAsync(object? parameter)
         {
             LoginErrorMessage = string.Empty;
 
@@ -197,27 +197,15 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 
             if (!hasError)
             {
-                var user = App.UserService?.Authenticate(Username, password);
+                var user = await App.userService.AuthenticateAsync(Username, password);
 
                 // Effacer la chaîne en mémoire
                 password = null;
 
                 if (user != null)
                 {
-                    // Connexion réussie
-                    //if (user.IsSuperAdmin)
-                    //{
-                    //    MessageBox.Show("Bienvenue, super administrateur!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("Connexion réussie!", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //}
-                    // Naviguer vers la vue appropriée
-                    // TODO: Implémenter la navigation
 
-                    // Connexion réussie, naviguer vers HomePage avec l'objet user
-                    if (user.IsActive)
+                    if (user.IsActive == 1)
                         NavigationService.Instance.OpenWindow<HomePage>(user);
                     else
                         LoginErrorMessage = "Accès refusé.";

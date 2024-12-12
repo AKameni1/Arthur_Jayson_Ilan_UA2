@@ -18,7 +18,8 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 {
     public class HomePageViewModel : ViewModelBase, INavigable
     {
-        private User _currentUser = new User();
+
+        private Model.User _currentUser = new();
         private string _profileImagePath = string.Empty;
         private string _selectedTabHeader = string.Empty;
         private UserControl _selectedTabContent = new UserControl();
@@ -51,7 +52,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
             set { _isMenuExpanded = value; OnPropertyChanged(nameof(IsMenuExpanded)); }
         }
 
-        public User CurrentUser
+        public Model.User CurrentUser
         {
             get => _currentUser;
             set { _currentUser = value; OnPropertyChanged(nameof(CurrentUser)); }
@@ -97,7 +98,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
         {
             // Initialisation des commandes
             LogoutCommand = new RelayCommand(ExecuteLogout);
-            AddNewMemberCommand = new RelayCommand(ExecuteAddNewMember);
+            AddNewMemberCommand = new AsyncRelayCommand(ExecuteAddNewMember);
             ToggleMenuCommand = new RelayCommand(ExecuteToggleMenu);
             CogCommand = new RelayCommand(ExecuteCogCommand);
             BellCommand = new RelayCommand(ExecuteBellCommand);
@@ -149,11 +150,11 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 
         public void OnNavigatedTo(object parameter)
         {
-            if (parameter is User user)
+            if (parameter is Model.User user)
             {
                 CurrentUser = user;
-                SetProfileImagePath(user.Role);
-                LoadTabsBasedOnRole(user.Role);
+                SetProfileImagePath((UserRole)user.RoleId);
+                LoadTabsBasedOnRole((UserRole)user.RoleId);
 
                 // Charger par défaut le premier onglet
                 if (Tabs.Count > 0)
@@ -319,19 +320,19 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.HomePageViewModels
 
         private void ExecuteLogout(object? parameter)
         {           
-            App.UserService.Logout();
+            App.userService.Logout();
             // Naviguer vers la fenêtre de connexion
             NavigationService.Instance.OpenWindow<MainWindow>();
         }
 
-        private void ExecuteAddNewMember(object? parameter)
+        private async Task ExecuteAddNewMember(object? parameter)
         {
             // Même si le bouton ne sert pas à ajouter des membres, il peut naviguer vers une autre vue
             // Exemple : Naviguer vers une vue d'ajout d'entité
             //NavigationService.Instance.NavigateTo(new AddEntityView()); // À implémenter
             //var addEntityView = new AddEntityView();
             //addEntityView.ShowDialog();
-            App.UserService.AddUser();
+            await App.userService.AddUserAsync();
         }
 
         private void ExecuteToggleMenu(object? parameter)

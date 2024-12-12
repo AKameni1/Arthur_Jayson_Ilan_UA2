@@ -33,6 +33,7 @@ namespace Arthur_Jayson_Ilan_UA2.Service
             var superAdmin = new User(username, email, password)
             {
                 RoleId = (int)UserRole.SuperAdmin,
+                IsSuperAdmin = true,
             };
 
             await _context.Users.AddAsync(superAdmin);
@@ -228,6 +229,12 @@ namespace Arthur_Jayson_Ilan_UA2.Service
             await _context.SaveChangesAsync();
 
             OnMessageSent($"Mot de passe de l'utilisateur '{user.Username}' mis à jour.");
+        }
+
+        public async Task AddUserAsync()
+        {
+            await _context.Users.AddAsync(new User());
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>

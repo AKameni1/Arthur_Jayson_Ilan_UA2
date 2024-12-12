@@ -82,7 +82,7 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
             }
         }
 
-        private SecureString _confirmPassword = new SecureString();
+        private SecureString _confirmPassword = new();
         public SecureString ConfirmPassword
         {
             get => _confirmPassword;
@@ -353,7 +353,6 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
             {
                 try
                 {
-
                     // Appeler le service d'inscription
                     App.UserService.RegisterUser(Username, password, Email);
 

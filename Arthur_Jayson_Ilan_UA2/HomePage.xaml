@@ -67,7 +67,7 @@
                             </Button>
 
                             <TextBlock Text="{Binding CurrentUser.Username}" Foreground="White" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0" TextAlignment="Center"/>
-                            <TextBlock Text="{Binding CurrentUser.Role}" Foreground="#D0BFFF" FontSize="14" FontWeight="SemiBold" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding CurrentUser.RoleName}" Foreground="#D0BFFF" FontSize="14" FontWeight="SemiBold" TextAlignment="Center"/>
                         </StackPanel>
 
                         <!-- Menu Separator -->

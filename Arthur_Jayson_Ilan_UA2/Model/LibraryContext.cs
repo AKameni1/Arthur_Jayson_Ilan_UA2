@@ -6,14 +6,9 @@ namespace Arthur_Jayson_Ilan_UA2.Model;
 
 public partial class LibraryContext : DbContext
 {
-    public LibraryContext()
-    {
-    }
+    public LibraryContext() { }
 
-    public LibraryContext(DbContextOptions<LibraryContext> options)
-        : base(options)
-    {
-    }
+    public LibraryContext(DbContextOptions<LibraryContext> options) : base(options) { }
 
     public virtual DbSet<Auditlog> Auditlogs { get; set; } = null!;
 
@@ -204,6 +199,13 @@ public partial class LibraryContext : DbContext
                         j.IndexerProperty<int>("RoleId").HasColumnName("RoleID");
                         j.IndexerProperty<int>("PermissionId").HasColumnName("PermissionID");
                     });
+
+            entity.HasData(
+                new Role { RoleId = 1, Name = "SuperAdmin", Description = "Super administrateur avec droits complets" },
+                new Role { RoleId = 2, Name = "Administrator", Description = "Administrateur" },
+                new Role { RoleId = 3, Name = "Librarian", Description = "Bibliothécaire" },
+                new Role { RoleId = 4, Name = "Client", Description = "Client" }
+            );
         });
 
         modelBuilder.Entity<Supportticket>(entity =>

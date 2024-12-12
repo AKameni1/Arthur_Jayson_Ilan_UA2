@@ -3,6 +3,7 @@ using System.Data;
 using System.Windows;
 using Arthur_Jayson_Ilan_UA2.Model;
 using Arthur_Jayson_Ilan_UA2.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Arthur_Jayson_Ilan_UA2
 {
@@ -15,14 +16,17 @@ namespace Arthur_Jayson_Ilan_UA2
         public readonly static Service.UserService userService = new();
         protected override async void OnStartup(StartupEventArgs e)
         {
+            using (LibraryContext context = new()) { context.Database.EnsureCreated(); }
+
             base.OnStartup(e);
             // Initialiser le SuperAdmin au démarrage
+
             try
             {
                 await userService.CreateSuperAdminIfNotExistsAsync(
-                    username: "Admin",
+                    username: "Arthur",
                     email: "admin@example.com",
-                    password: "SuperSecurePassword123"
+                    password: "123"
                 );
             }
             catch (InvalidOperationException ex)
@@ -33,7 +37,7 @@ namespace Arthur_Jayson_Ilan_UA2
             catch (Exception ex)
             {
                 // Log ou afficher une erreur critique
-                MessageBox.Show($"Erreur lors de la création du SuperAdmin : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Erreur lors de la création du SuperAdmin : {ex.Message}\n{ex.InnerException?.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 Shutdown(); // Arrêter l'application en cas d'erreur critique
             }
         }

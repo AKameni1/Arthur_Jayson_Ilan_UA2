@@ -17,27 +17,27 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
 {
     public class EditUserViewModel : INotifyPropertyChanged
     {
-        private readonly User _user;
+        private readonly Model.User _user;
 
         // Indique si l'utilisateur à éditer est le SuperAdmin
-        public bool IsEditingSuperAdmin => _user.Role == UserRole.SuperAdmin;                
-        public bool IsEditingClient => _user.Role == UserRole.Client;        
+        public bool IsEditingSuperAdmin => _user.RoleId == (int)UserRole.SuperAdmin;                
+        public bool IsEditingClient => _user.RoleId == (int)UserRole.Client;        
 
         private readonly string _initialUsername;
         private readonly string _initialEmail;
         private readonly UserRole _initialRole;
         private readonly bool _initialIsActive;
 
-        private HashSet<string> _modifiedProperties = new HashSet<string>();
+        private HashSet<string> _modifiedProperties = new();
 
-        public EditUserViewModel(User user)
+        public EditUserViewModel(Model.User user)
         {
             _user = user;
 
             _initialUsername = _user.Username;
             _initialEmail = _user.Email;
-            _initialRole = _user.Role;
-            _initialIsActive = _user.IsActive;
+            _initialRole = (UserRole)_user.RoleId;
+            _initialIsActive = (_user.IsActive == 1);
 
             Username = _initialUsername;
             Email = _initialEmail;
@@ -88,7 +88,7 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
                 }
             }
 
-            SaveCommand = new RelayCommand(Save, CanSave);
+            SaveCommand = new AsyncRelayCommand(Save, CanSave);
             CancelCommand = new RelayCommand(Cancel);
         }
 
@@ -123,7 +123,7 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
 
-        private void Save(object? parameter)
+        private async Task Save(object? parameter)
         {
             try
             {
@@ -131,12 +131,12 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
                 // Mettre à jour uniquement les propriétés modifiées
                 if (_modifiedProperties.Contains(nameof(Username)) && Username != _initialUsername)
                 {
-                    App.UserService.UpdateUsername(_user, Username);
+                    await App.userService.UpdateUsernameAsync(_user, Username);
                 }
 
                 if (_modifiedProperties.Contains(nameof(Email)) && Email != _initialEmail)
                 {
-                    App.UserService.UpdateEmail(_user, Email);
+                    await App.userService.UpdateEmailAsync(_user, Email);
                 }
 
                 if (_modifiedProperties.Contains(nameof(Role)) && Role != _initialRole)
@@ -146,20 +146,20 @@ namespace Arthur_Jayson_Ilan_UA2.Dialogs.ViewModels
                         case UserRole.SuperAdmin:
                             break;
                         case UserRole.Administrator:
-                            App.UserService.PromoteToAdmin(App.UserService.CurrentUser, _user);
+                            await App.userService.PromoteToAdminAsync(App.userService.CurrentUser, _user);
                             break;
                         case UserRole.Librarian:
-                            App.UserService.PromoteToLibrarian(App.UserService.CurrentUser, _user);
+                            await App.userService.PromoteToLibrarianAsync(App.userService.CurrentUser, _user);
                             break;
                         case UserRole.Client:
-                            App.UserService.DemoteToClient(App.UserService.CurrentUser, _user);
+                            await App.userService.DemoteToClientAsync(App.userService.CurrentUser, _user);
                             break;
                     }
                 }
 
                 if (_modifiedProperties.Contains(nameof(IsActive)) && IsActive != _initialIsActive)
                 {
-                    App.UserService.MakeNotActive(_user);
+                    await App.userService.MakeNotActiveAsync(_user);
                 }
 
                 // Fermer la fenêtre avec un résultat de succès

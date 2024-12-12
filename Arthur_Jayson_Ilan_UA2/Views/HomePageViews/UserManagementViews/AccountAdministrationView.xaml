@@ -17,14 +17,17 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Button Content="Rafraichir" Command="{Binding RefreshCommand}" Grid.Row="0" Style="{StaticResource AddButton}"/>
+
         <!-- Notification Message -->
-        <materialDesign:Snackbar x:Name="NotificationSnackbar" Grid.Row="0" MessageQueue="{Binding MessageQueue}" FontWeight="SemiBold" Foreground="Green" Width="Auto"/>
+        <materialDesign:Snackbar x:Name="NotificationSnackbar" Grid.Row="1" MessageQueue="{Binding MessageQueue}" FontWeight="SemiBold" Foreground="Green" Width="Auto"/>
 
         <!-- Bouton de suppression multiple -->
-        <Button Grid.Row="1"
+        <Button Grid.Row="2"
                 Command="{Binding DeleteMultipleUsersCommand}"
                 CommandParameter="{x:Null}"
                 Visibility="{Binding CanShowDeleteMultipleButton, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -100,7 +103,7 @@
                                 <!-- Masquer tous les boutons si la ligne représente le SuperAdmin et le currentUser n'est pas SuperAdmin -->
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Role}" Value="SuperAdmin" />
+                                        <Condition Binding="{Binding RoleId}" Value="1" />
                                         <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False" />
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="EditButton" Property="Visibility" Value="Collapsed" />
@@ -109,7 +112,7 @@
                                 <!-- Afficher DeleteButton si currentUser est SuperAdmin et rowUser n'est pas SuperAdmin -->
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Role}" Value="Client"/>
+                                        <Condition Binding="{Binding RoleId}" Value="4"/>
                                         <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible"/>
@@ -117,7 +120,7 @@
                                 
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Role}" Value="Administrator"/>
+                                        <Condition Binding="{Binding RoleId}" Value="2"/>
                                         <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible"/>
@@ -125,7 +128,7 @@
                                 
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Role}" Value="Librarian"/>
+                                        <Condition Binding="{Binding RoleId}" Value="3"/>
                                         <Condition Binding="{Binding DataContext.IsCurrentUserSuperAdmin, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible"/>
