@@ -8,9 +8,9 @@ namespace Arthur_Jayson_Ilan_UA2.Services
 {
     public enum UserRole
     {
-        SuperAdmin,
-        Administrator,
-        Librarian,
-        Client
+        SuperAdmin = 1,
+        Administrator = 2,
+        Librarian = 3,
+        Client = 4
     }
 }

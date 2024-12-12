@@ -11,6 +11,8 @@ namespace Arthur_Jayson_Ilan_UA2.Service
 {
     public class UserService : IUserService
     {
+        public UserService() { }
+
         public event EventHandler<string>? MessageSent;
         public User CurrentUser { get; private set; } = new User();
         protected void OnMessageSent(string message)
@@ -18,8 +20,26 @@ namespace Arthur_Jayson_Ilan_UA2.Service
             MessageSent?.Invoke(this, message);
         }
 
-
         private readonly LibraryContext _context = LibraryContextManager.Instance;
+
+        /// <summary>
+        /// Crée un SuperAdmin si aucun n'existe dans la base de données.
+        /// </summary>
+        public async Task CreateSuperAdminIfNotExistsAsync(string username, string email, string password)
+        {
+            if (await _context.Users.AnyAsync(u => u.RoleId == (int)UserRole.SuperAdmin)) throw new InvalidOperationException("Un SuperAdmin existe déjà.");
+
+            // Création du SuperAdmin
+            var superAdmin = new User(username, email, password)
+            {
+                RoleId = (int)UserRole.SuperAdmin,
+            };
+
+            await _context.Users.AddAsync(superAdmin);
+            await _context.SaveChangesAsync();
+
+            OnMessageSent($"SuperAdmin '{username}' créé avec succès.");
+        }
 
         /// <summary>
         /// Authentifie un utilisateur en vérifiant le nom d'utilisateur et le mot de passe.

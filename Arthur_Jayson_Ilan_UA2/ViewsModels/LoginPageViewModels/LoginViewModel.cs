@@ -18,14 +18,12 @@ namespace Arthur_Jayson_Ilan_UA2.ViewsModels.LoginPageViewModels
 {
     public class LoginViewModel : ViewModelBase
     {
-        //private readonly INavigationService _navigationService;
 
         // Flag pour éviter les boucles infinies
         private bool _isUpdatingPassword = false;
 
-        public LoginViewModel() // INavigationService navigationService
+        public LoginViewModel()
         {
-            //_navigationService = navigationService;
 
             ConnectCommand = new RelayCommand(ExecuteConnect);
             TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);

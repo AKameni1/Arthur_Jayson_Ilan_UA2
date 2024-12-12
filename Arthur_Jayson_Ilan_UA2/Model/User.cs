@@ -188,6 +188,19 @@ namespace Arthur_Jayson_Ilan_UA2.Model
             }
         }
 
+        private bool _isSuperAdmin;
+        public bool IsSuperAdmin
+        {
+            get => _isSuperAdmin;
+            set
+            {
+                if (_isSuperAdmin != value)
+                {
+                    _isSuperAdmin = value;
+                    OnPropertyChanged(nameof(IsSuperAdmin));
+                }
+            }
+        }
 
         public DateTime? LoanSuspendedUntil { get; set; }
 
@@ -209,14 +222,15 @@ namespace Arthur_Jayson_Ilan_UA2.Model
 
         public virtual ICollection<Permission> Permissions { get; set; } = [];
 
-        public User(string username, string email, string password, UserRole role = UserRole.Client, bool isActive = true)
+        public User(string username, string email, string password, UserRole role = UserRole.Client, bool isSuperAdmin = false, bool isActive = true, DateTime? creationDate = null)
         {
             Username = username;
             Email = email;
             SetPassword(password);
             RoleId = (int)role;
+            IsSuperAdmin = isSuperAdmin;
             IsActive = isActive ? 1 : 0;
-            CreationDate = DateTime.Now;
+            CreationDate = creationDate ?? DateTime.Now;
         }
 
         // Constructeur par défaut
